@@ -142,7 +142,7 @@ export default function AboutSection() {
 					ref={cardContainerRef}
 				>
 					<Lanyard
-						cardScale={3.15}
+						cardScale={5.04}
 						gravity={[0, -40, 0]}
 						position={[0, 0, 20]}
 					/>
@@ -181,7 +181,7 @@ export default function AboutSection() {
 									splitBy="characters"
 									splitLevelClassName="overflow-hidden pb-0.5"
 									staggerDuration={0.025}
-									staggerFrom="last"
+									staggerFrom="first"
 									texts={[
 										"building things",
 										"breaking things",
