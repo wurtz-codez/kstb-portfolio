@@ -4,6 +4,7 @@ import gsap from "gsap";
 import React, {
 	Children,
 	cloneElement,
+	forwardRef,
 	isValidElement,
 	type ReactElement,
 	type ReactNode,
@@ -31,17 +32,16 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 	customClass?: string;
 }
 
-export const Card = ({
-	customClass,
-	ref,
-	...rest
-}: CardProps & { ref?: React.Ref<HTMLDivElement> }) => (
-	<div
-		ref={ref}
-		{...rest}
-		className={`card ${customClass ?? ""} ${rest.className ?? ""}`.trim()}
-	/>
+export const Card = forwardRef<HTMLDivElement, CardProps>(
+	({ customClass, ...rest }, ref) => (
+		<div
+			ref={ref}
+			{...rest}
+			className={`card ${customClass ?? ""} ${rest.className ?? ""}`.trim()}
+		/>
+	)
 );
+Card.displayName = "Card";
 
 type CardRef = RefObject<HTMLDivElement | null>;
 interface Slot {
@@ -92,19 +92,11 @@ const CardSwap: React.FC<CardSwapProps> = ({
 		return easing === "elastic"
 			? {
 					ease: "elastic.out(0.6,0.9)",
-					durDrop: 2,
-					durMove: 2,
-					durReturn: 2,
-					promoteOverlap: 0.9,
-					returnDelay: 0.05,
+					duration: 2,
 				}
 			: {
 					ease: "power1.inOut",
-					durDrop: 0.8,
-					durMove: 0.8,
-					durReturn: 0.8,
-					promoteOverlap: 0.45,
-					returnDelay: 0.2,
+					duration: 0.8,
 				};
 	}, [easing]);
 
@@ -117,10 +109,9 @@ const CardSwap: React.FC<CardSwapProps> = ({
 		[childArr]
 	);
 
-	const order = useRef<number[]>([]);
-	useEffect(() => {
-		order.current = Array.from({ length: childArr.length }, (_, i) => i);
-	}, [childArr.length]);
+	const order = useRef<number[]>(
+		Array.from({ length: childArr.length }, (_, i) => i)
+	);
 
 	const tlRef = useRef<gsap.core.Timeline | null>(null);
 	const intervalRef = useRef<number>(0);
@@ -145,66 +136,52 @@ const CardSwap: React.FC<CardSwapProps> = ({
 			}
 
 			const [front, ...rest] = order.current;
-			const elFront = refs[front].current;
-			if (!elFront) {
-				return;
-			}
-
 			const tl = gsap.timeline();
 			tlRef.current = tl;
 
-			tl.to(elFront, {
-				y: "+=500",
-				duration: config.durDrop,
-				ease: config.ease,
-			});
-
-			tl.addLabel("promote", `-=${config.durDrop * config.promoteOverlap}`);
+			// Animate rest cards forward one slot
 			rest.forEach((idx, i) => {
 				const el = refs[idx].current;
 				if (!el) {
 					return;
 				}
 				const slot = makeSlot(i, cardDistance, verticalDistance, refs.length);
-				tl.set(el, { zIndex: slot.zIndex }, "promote");
 				tl.to(
 					el,
 					{
 						x: slot.x,
 						y: slot.y,
 						z: slot.z,
-						duration: config.durMove,
+						zIndex: slot.zIndex,
+						duration: config.duration,
 						ease: config.ease,
 					},
-					`promote+=${i * 0.15}`
+					0
 				);
 			});
 
-			const backSlot = makeSlot(
-				refs.length - 1,
-				cardDistance,
-				verticalDistance,
-				refs.length
-			);
-			tl.addLabel("return", `promote+=${config.durMove * config.returnDelay}`);
-			tl.call(
-				() => {
-					gsap.set(elFront, { zIndex: backSlot.zIndex });
-				},
-				undefined,
-				"return"
-			);
-			tl.to(
-				elFront,
-				{
-					x: backSlot.x,
-					y: backSlot.y,
-					z: backSlot.z,
-					duration: config.durReturn,
-					ease: config.ease,
-				},
-				"return"
-			);
+			// Animate front card directly to back (no separate drop/return)
+			const elFront = refs[front].current;
+			if (elFront) {
+				const backSlot = makeSlot(
+					refs.length - 1,
+					cardDistance,
+					verticalDistance,
+					refs.length
+				);
+				tl.to(
+					elFront,
+					{
+						x: backSlot.x,
+						y: backSlot.y,
+						z: backSlot.z,
+						zIndex: backSlot.zIndex,
+						duration: config.duration,
+						ease: config.ease,
+					},
+					0
+				);
+			}
 
 			tl.call(() => {
 				order.current = [...rest, front];
@@ -222,6 +199,7 @@ const CardSwap: React.FC<CardSwapProps> = ({
 				};
 				const resume = () => {
 					tlRef.current?.play();
+					swap();
 					intervalRef.current = window.setInterval(swap, delay);
 				};
 				node.addEventListener("mouseenter", pause);
