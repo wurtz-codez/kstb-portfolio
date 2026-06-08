@@ -132,7 +132,7 @@
 		@apply inline-flex items-center justify-center h-full px-[18px] rounded-full box-border font-semibold text-sm uppercase tracking-wider whitespace-nowrap cursor-pointer relative overflow-hidden;
 		background: var(--pill-bg, #fff);
 		color: var(--pill-text, var(--base, #000));
-		font-family: var(--font-jetbrains-mono), monospace;
+		font-family: var(--font-geist-mono), monospace;
 	}
 
 	.pill-logo {
@@ -191,7 +191,7 @@
 		@apply block px-4 py-3 no-underline text-base font-medium rounded-full cursor-pointer transition-all duration-200;
 		background-color: var(--pill-bg, #fff);
 		color: var(--pill-text, #fff);
-		font-family: var(--font-jetbrains-mono), monospace;
+		font-family: var(--font-geist-mono), monospace;
 	}
 
 	.mobile-menu-link:hover {
@@ -208,6 +208,18 @@
 
 @media (max-width: 640px) {
 	.bottom-text-points > *:nth-child(n + 3) {
+		display: none;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.spotlight-overlay {
+		animation: none !important;
+		transition: none !important;
+		transform: none !important;
+		opacity: 1 !important;
+	}
+	.spotlight-overlay {
 		display: none;
 	}
 }

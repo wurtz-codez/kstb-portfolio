@@ -9,7 +9,7 @@ import { DecryptedText } from "@/components/decrypted-text";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const FONT_MONO = "var(--font-jetbrains-mono), monospace";
+const FONT_MONO = "var(--font-geist-mono), monospace";
 
 const SOCIAL_LINKS = [
 	{ label: "GitHub", href: "https://github.com/wurtz-codez" },
@@ -519,7 +519,7 @@ export default function Footer() {
 				<div className="mb-16">
 					<div
 						style={{
-							fontFamily: "var(--font-telma)",
+							fontFamily: "var(--font-geist-sans)",
 							fontSize: "clamp(1.75rem, 6vw, 5.5rem)",
 							fontWeight: 700,
 							lineHeight: 1,

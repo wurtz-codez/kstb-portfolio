@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 
-import { Geist, Geist_Mono, JetBrains_Mono } from "next/font/google";
-import localFont from "next/font/local";
+import { Geist, Geist_Mono } from "next/font/google";
 
 import "../index.css";
 import Providers from "@/components/providers";
@@ -14,38 +13,6 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
 	variable: "--font-geist-mono",
 	subsets: ["latin"],
-});
-
-const jetbrainsMono = JetBrains_Mono({
-	variable: "--font-jetbrains-mono",
-	subsets: ["latin"],
-});
-
-const telma = localFont({
-	src: [
-		{
-			path: "../../public/fonts/Telma-Variable.woff2",
-			weight: "300 900",
-			style: "normal",
-		},
-		{
-			path: "../../public/fonts/Telma-Variable.woff",
-			weight: "300 900",
-			style: "normal",
-		},
-		{
-			path: "../../public/fonts/Telma-Variable.woff2",
-			weight: "300 900",
-			style: "italic",
-		},
-		{
-			path: "../../public/fonts/Telma-Variable.woff",
-			weight: "300 900",
-			style: "italic",
-		},
-	],
-	variable: "--font-telma",
-	display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -61,7 +28,7 @@ export default function RootLayout({
 	return (
 		<html lang="en" suppressHydrationWarning>
 			<body
-				className={`${geistSans.variable} ${geistMono.variable} ${jetbrainsMono.variable} ${telma.variable} antialiased`}
+				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
 			>
 				<Providers>
 					<div className="min-h-svh">{children}</div>

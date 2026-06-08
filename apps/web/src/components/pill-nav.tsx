@@ -312,7 +312,7 @@ export default function PillNav({
 					>
 						<ul
 							className="m-0 flex h-full list-none items-stretch gap-[3px] p-[3px]"
-							style={{ fontFamily: "var(--font-jetbrains-mono), monospace" }}
+							style={{ fontFamily: "var(--font-geist-mono), monospace" }}
 						>
 							{leftItems.map((item, localIndex) => {
 								const i = localIndex;
@@ -402,7 +402,7 @@ export default function PillNav({
 					>
 						<ul
 							className="m-0 flex h-full list-none items-stretch gap-[3px] p-[3px]"
-							style={{ fontFamily: "var(--font-jetbrains-mono), monospace" }}
+							style={{ fontFamily: "var(--font-geist-mono), monospace" }}
 						>
 							{rightItems.map((item, localIndex) => {
 								const i = half + localIndex;

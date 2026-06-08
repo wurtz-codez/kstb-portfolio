@@ -36,7 +36,7 @@ export default function BottomText() {
 					key={point}
 					startWhen={loaderComplete}
 					style={{
-						fontFamily: "var(--font-jetbrains-mono), monospace",
+						fontFamily: "var(--font-geist-mono), monospace",
 						fontSize: "clamp(0.75rem, 1.5vw, 0.875rem)",
 						letterSpacing: "0.03em",
 						lineHeight: 1.5,
