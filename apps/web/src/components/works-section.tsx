@@ -131,22 +131,22 @@ export default function WorksSection() {
 			<div className="mx-auto grid w-full max-w-[1400px] grid-cols-1 items-center gap-16 px-6 lg:grid-cols-[40%_60%] lg:gap-24">
 				{/* Left Column: Heading and Info */}
 				<div className="flex flex-col items-start" ref={textRef}>
-					<span className="mb-6 block font-[family:var(--font-geist-mono)] text-white/40 text-xs uppercase tracking-[0.3em]">
+					<span className="mb-6 block font-[family:var(--font-jetbrains-mono)] text-white/40 text-xs uppercase tracking-[0.3em]">
 						Works
 					</span>
 					<div className="mb-4 flex flex-col items-start leading-tight">
-						<span className="select-none font-[family:var(--font-geist-sans)] font-bold text-4xl text-white tracking-tight md:text-5xl lg:text-6xl">
+						<span className="select-none font-[family:var(--font-jetbrains-mono)] font-bold text-4xl text-white tracking-tight md:text-5xl lg:text-6xl">
 							built outta
 						</span>
 						<GlitchText
-							className="font-[family:var(--font-geist-sans)] font-bold text-4xl tracking-tight md:text-5xl lg:text-6xl"
+							className="font-[family:var(--font-jetbrains-mono)] font-bold text-4xl tracking-tight md:text-5xl lg:text-6xl"
 							enableShadows
 							speed={0.4}
 						>
 							curiosity
 						</GlitchText>
 					</div>
-					<div className="mt-6 min-h-[5.5rem] max-w-[40ch] font-[family:var(--font-geist-mono)] text-lg text-white/50 leading-relaxed md:min-h-[6.5rem] md:text-xl">
+					<div className="mt-6 min-h-[5.5rem] max-w-[40ch] font-[family:var(--font-jetbrains-mono)] text-lg text-white/50 leading-relaxed md:min-h-[6.5rem] md:text-xl">
 						<DecryptedText
 							delay={200}
 							duration={1800}
@@ -182,17 +182,17 @@ export default function WorksSection() {
 								>
 									<div className="flex flex-col">
 										<div className="flex items-start justify-between">
-											<span className="font-[family:var(--font-geist-mono)] text-white/40 text-xs uppercase tracking-[0.15em]">
+											<span className="font-[family:var(--font-jetbrains-mono)] text-white/40 text-xs uppercase tracking-[0.15em]">
 												{project.category}
 											</span>
-											<span className="font-[family:var(--font-geist-mono)] font-bold text-3xl text-white/10 leading-none">
+											<span className="font-[family:var(--font-jetbrains-mono)] font-bold text-3xl text-white/10 leading-none">
 												0{index + 1}
 											</span>
 										</div>
-										<h3 className="mt-8 font-[family:var(--font-geist-sans)] font-medium text-4xl text-white tracking-tight">
+										<h3 className="mt-8 font-[family:var(--font-jetbrains-mono)] font-medium text-4xl text-white tracking-tight">
 											{project.title}
 										</h3>
-										<p className="mt-6 max-w-[32ch] font-[family:var(--font-geist-sans)] text-base text-white/50 leading-relaxed">
+										<p className="mt-6 max-w-[32ch] font-[family:var(--font-jetbrains-mono)] text-base text-white/50 leading-relaxed">
 											{project.description}
 										</p>
 									</div>
@@ -201,7 +201,7 @@ export default function WorksSection() {
 										<div className="flex flex-wrap gap-2">
 											{project.tags.map((tag) => (
 												<span
-													className="rounded-full border border-white/5 bg-white/5 px-2.5 py-1 font-[family:var(--font-geist-mono)] text-[10px] text-white/40 uppercase tracking-wide"
+													className="rounded-full border border-white/5 bg-white/5 px-2.5 py-1 font-[family:var(--font-jetbrains-mono)] text-[10px] text-white/40 uppercase tracking-wide"
 													key={tag}
 												>
 													{tag}
@@ -212,7 +212,7 @@ export default function WorksSection() {
 										<div className="flex items-center gap-4 border-white/5 border-t pt-4">
 											{project.github && (
 												<a
-													className="font-[family:var(--font-geist-mono)] text-white/60 text-xs underline underline-offset-4 transition-colors hover:text-white"
+													className="font-[family:var(--font-jetbrains-mono)] text-white/60 text-xs underline underline-offset-4 transition-colors hover:text-white"
 													href={project.github}
 													rel="noopener noreferrer"
 													target="_blank"
@@ -222,7 +222,7 @@ export default function WorksSection() {
 											)}
 											{project.live && project.live !== "#" && (
 												<a
-													className="flex items-center gap-1 font-[family:var(--font-geist-mono)] text-white/60 text-xs underline underline-offset-4 transition-colors hover:text-white"
+													className="flex items-center gap-1 font-[family:var(--font-jetbrains-mono)] text-white/60 text-xs underline underline-offset-4 transition-colors hover:text-white"
 													href={project.live}
 													rel="noopener noreferrer"
 													target="_blank"

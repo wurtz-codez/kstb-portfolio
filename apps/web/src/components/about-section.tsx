@@ -152,20 +152,20 @@ export default function AboutSection() {
 				<div className="flex flex-col">
 					<div>
 						<span
-							className="mb-4 block font-[family:var(--font-geist-mono)] text-white/40 text-xs uppercase tracking-[0.3em]"
+							className="mb-4 block font-[family:var(--font-jetbrains-mono)] text-white/40 text-xs uppercase tracking-[0.3em]"
 							ref={labelRef}
 						>
 							{COPY.label}
 						</span>
 						<h2
-							className="mb-8 max-w-[65ch] font-[family:var(--font-geist-sans)] font-medium text-4xl text-white leading-[1.1] tracking-tight md:text-5xl lg:text-6xl"
+							className="mb-8 max-w-[65ch] font-[family:var(--font-jetbrains-mono)] font-medium text-4xl text-white leading-[1.1] tracking-tight md:text-5xl lg:text-6xl"
 							ref={headingRef}
 						>
 							{COPY.heading}
 						</h2>
 
 						<div
-							className="mb-10 space-y-4 font-[family:var(--font-geist-sans)] text-base text-white/60 leading-normal md:text-lg"
+							className="mb-10 space-y-4 font-[family:var(--font-jetbrains-mono)] text-base text-white/60 leading-normal md:text-lg"
 							ref={pContainerRef}
 						>
 							<p className="flex max-w-[65ch] flex-wrap items-center gap-x-2 font-medium text-white">
@@ -228,10 +228,10 @@ export default function AboutSection() {
 								className="group border-white/10 border-t pt-6 pb-8 transition-colors duration-300 hover:border-white/30"
 								key={item.category}
 							>
-								<h3 className="mb-2 font-[family:var(--font-geist-sans)] font-medium text-lg text-white transition-transform duration-300 group-hover:translate-x-1">
+								<h3 className="mb-2 font-[family:var(--font-jetbrains-mono)] font-medium text-lg text-white transition-transform duration-300 group-hover:translate-x-1">
 									{item.category}
 								</h3>
-								<p className="font-[family:var(--font-geist-mono)] text-white/50 text-xs tracking-wider transition-colors duration-300 group-hover:text-white/80">
+								<p className="font-[family:var(--font-jetbrains-mono)] text-white/50 text-xs tracking-wider transition-colors duration-300 group-hover:text-white/80">
 									{item.stack.join("  ·  ")}
 								</p>
 							</div>
