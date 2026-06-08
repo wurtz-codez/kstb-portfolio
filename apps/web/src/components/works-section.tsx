@@ -124,7 +124,7 @@ export default function WorksSection() {
 
 	return (
 		<section
-			className="relative z-20 flex min-h-screen w-full items-center justify-center overflow-hidden bg-black py-32 md:py-48 lg:py-64"
+			className="relative z-20 flex min-h-screen w-full items-center justify-center overflow-hidden bg-background py-32 md:py-48 lg:py-64"
 			id="works"
 			ref={sectionRef}
 		>
