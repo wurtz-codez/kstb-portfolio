@@ -38,7 +38,7 @@ export default function Lanyard({
 	gravity = [0, -40, 0],
 	fov = 20,
 	transparent = true,
-	cardScale = 2.25,
+	cardScale = 3.15,
 }: LanyardProps) {
 	const [isMobile, setIsMobile] = useState<boolean>(
 		() => typeof window !== "undefined" && window.innerWidth < 768
@@ -110,7 +110,7 @@ function Band({
 	maxSpeed = 50,
 	minSpeed = 0,
 	isMobile = false,
-	cardScale = 2.25,
+	cardScale = 3.15,
 }: BandProps) {
 	// biome-ignore lint/suspicious/noExplicitAny: refs depend on Three/Rapier internals
 	const band = useRef<any>(null);
@@ -142,6 +142,8 @@ function Band({
 	// biome-ignore lint/suspicious/noExplicitAny: useGLTF nodes/materials are dynamically generated
 	const { nodes, materials } = useGLTF("/card.glb") as any;
 	const texture = useTexture("/lanyard.png");
+	const cardTexture = useTexture("/IMG_0894_2.jpg");
+	cardTexture.flipY = false;
 	const [curve] = useState(
 		() =>
 			new CatmullRomCurve3([
@@ -284,7 +286,7 @@ function Band({
 							<meshPhysicalMaterial
 								clearcoat={isMobile ? 0 : 1}
 								clearcoatRoughness={0.15}
-								map={materials.base.map}
+								map={cardTexture}
 								map-anisotropy={16}
 								metalness={0.8}
 								roughness={0.9}
