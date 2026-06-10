@@ -23,6 +23,7 @@ export interface CardSwapProps {
 	delay?: number;
 	pauseOnHover?: boolean;
 	onCardClick?: (idx: number) => void;
+	onCardChange?: (idx: number) => void;
 	skewAmount?: number;
 	easing?: "linear" | "elastic";
 	children: ReactNode;
@@ -84,6 +85,7 @@ const CardSwap: React.FC<CardSwapProps> = ({
 	delay = 5000,
 	pauseOnHover = false,
 	onCardClick,
+	onCardChange,
 	skewAmount = 6,
 	easing = "elastic",
 	children,
@@ -136,6 +138,10 @@ const CardSwap: React.FC<CardSwapProps> = ({
 			}
 
 			const [front, ...rest] = order.current;
+
+			// Trigger change immediately at start of animation so text can sync
+			onCardChange?.(rest[0]);
+
 			const tl = gsap.timeline();
 			tlRef.current = tl;
 
@@ -220,6 +226,7 @@ const CardSwap: React.FC<CardSwapProps> = ({
 		skewAmount,
 		refs,
 		config,
+		onCardChange,
 	]);
 
 	const rendered = childArr.map((child, i) =>
@@ -227,7 +234,12 @@ const CardSwap: React.FC<CardSwapProps> = ({
 			? cloneElement(child, {
 					key: i,
 					ref: refs[i],
-					style: { width, height, ...(child.props.style ?? {}) },
+					style: {
+						width,
+						height,
+						cursor: "pointer",
+						...(child.props.style ?? {}),
+					},
 					onClick: (e) => {
 						child.props.onClick?.(e as React.MouseEvent<HTMLDivElement>);
 						onCardClick?.(i);

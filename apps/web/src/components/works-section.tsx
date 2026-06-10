@@ -11,18 +11,32 @@ gsap.registerPlugin(ScrollTrigger);
 
 const PROJECTS = [
 	{
+		title: "Qode",
+		description: "The nervous system for visual codebase exploration.",
+		longDescription:
+			"Qode is a specialized engine for mapping complex codebases into interactive visual graphs. It leverages tree-sitter and sigma.js to let developers see the actual architecture of their software, identifying bottlenecks and dead code through data-driven visualization.",
+		category: "work",
+		tags: ["Next.js", "Tree-sitter", "Sigma.js", "LLM", "AI", "TS"],
+		github: "https://github.com/wurtz-codez/verq",
+		live: "https://verqai.vercel.app",
+	},
+	{
 		title: "verq",
 		description:
 			"A comprehensive AI-based platform designed to simplify workflows.",
+		longDescription:
+			"Verq is an integrated workspace that automates repetitive engineering tasks using custom LLM agents. It bridges the gap between project management and code execution, allowing teams to go from high-level requirements to PR-ready code in minutes.",
 		category: "work",
 		tags: ["Next.js", "AI", "React"],
 		github: "https://github.com/wurtz-codez/verq",
 		live: "https://verqai.vercel.app",
 	},
 	{
-		title: "arkaiv",
+		title: "Arkaiv",
 		description:
 			"AI-based search, discovery, and curation engine for models and tools.",
+		longDescription:
+			"Arkaiv serves as a high-performance discovery layer for the rapidly evolving AI ecosystem. It curates state-of-the-art models and developer tools, providing semantic search capabilities that help engineers find the exact components needed for their next project.",
 		category: "work",
 		tags: ["Discovery", "AI", "Tailwind"],
 		github: "https://github.com/wurtz-codez/arkaiv",
@@ -32,6 +46,8 @@ const PROJECTS = [
 		title: "Jewelry by LUNA",
 		description:
 			"E-commerce platform showcasing premium, curated jewelry collections.",
+		longDescription:
+			"A premium digital storefront designed for the luxury jewelry market. This project focuses on high-fidelity visual storytelling, utilizing smooth transition logic and a custom checkout flow to mirror the physical elegance of the curated collections.",
 		category: "work",
 		tags: ["E-commerce", "React", "Stripe"],
 		github: "https://github.com/wurtz-codez/Jewelry-by-LUNA",
@@ -40,6 +56,8 @@ const PROJECTS = [
 	{
 		title: "ALLROUND",
 		description: "Private software engine for multi-agent coordination.",
+		longDescription:
+			"ALLROUND is a low-latency coordination engine built for multi-agent systems. It handles the real-time communication, state synchronization, and task delegation required for complex AI swarms to operate autonomously across distributed environments.",
 		category: "project",
 		tags: ["Agentic", "TS", "Bun"],
 		github: "https://github.com/singularityworks-xyz/ALLROUND",
@@ -52,6 +70,7 @@ export default function WorksSection() {
 	const textRef = useRef<HTMLDivElement>(null);
 	const deckRef = useRef<HTMLDivElement>(null);
 	const [decryptActive, setDecryptActive] = useState(false);
+	const [activeIndex, setActiveIndex] = useState(0);
 
 	useEffect(() => {
 		const sectionEl = sectionRef.current;
@@ -146,15 +165,14 @@ export default function WorksSection() {
 							curiosity
 						</GlitchText>
 					</div>
-					<div className="mt-6 min-h-[5.5rem] max-w-[40ch] font-[family:var(--font-jetbrains-mono)] text-lg text-white/50 leading-relaxed md:min-h-[6.5rem] md:text-xl">
+					<div className="mt-6 min-h-[12rem] max-w-[50ch] font-[family:var(--font-jetbrains-mono)] text-base text-white/50 leading-relaxed md:text-lg lg:min-h-[14rem]">
 						<DecryptedText
-							delay={200}
-							duration={1800}
-							speed={35}
+							delay={0}
+							duration={2000}
+							speed={30}
 							startWhen={decryptActive}
 						>
-							ai, design, engineering, and an unhealthy tendency to start new
-							projects.
+							{PROJECTS[activeIndex]?.longDescription ?? ""}
 						</DecryptedText>
 					</div>
 				</div>
@@ -167,9 +185,10 @@ export default function WorksSection() {
 					<div className="relative mr-0 h-[540px] w-[700px] lg:mr-8">
 						<CardSwap
 							cardDistance={55}
-							delay={1500}
+							delay={5000}
 							easing="elastic"
 							height={540}
+							onCardChange={(idx) => setActiveIndex(idx)}
 							pauseOnHover={true}
 							skewAmount={3}
 							verticalDistance={55}
