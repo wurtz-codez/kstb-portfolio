@@ -205,9 +205,33 @@
 		touch-action: none;
 		z-index: 0;
 	}
+
+	.bottom-text-points {
+		@apply absolute right-0 left-0 flex flex-wrap items-start justify-between;
+		bottom: clamp(1.5rem, 5vw, 4rem);
+		padding: 0 clamp(1.5rem, 5vw, 4rem);
+		column-gap: 1.5rem;
+		row-gap: 0.35rem;
+	}
+
+	.bottom-text-point {
+		font-family: var(--font-jetbrains-mono), monospace;
+		font-size: clamp(0.75rem, 1.5vw, 0.875rem);
+		letter-spacing: 0.03em;
+		line-height: 1.5;
+		color: rgb(128, 128, 128);
+	}
+
+	.about-line {
+		will-change: transform, opacity;
+	}
 }
 
-@media (max-width: 640px) {
+@media (max-width: 639px) {
+	.bottom-text-points {
+		flex-direction: column;
+		row-gap: 0.15rem;
+	}
 	.bottom-text-points > *:nth-child(n + 3) {
 		display: none;
 	}

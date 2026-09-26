@@ -65,12 +65,66 @@ const PROJECTS = [
 	},
 ] as const;
 
+interface DeckConfig {
+	width: number;
+	height: number;
+	distance: number;
+	vDistance: number;
+	compensate: boolean;
+}
+
+const DESKTOP_DECK: DeckConfig = {
+	width: 700,
+	height: 540,
+	distance: 55,
+	vDistance: 55,
+	compensate: false,
+};
+
+function getDeckConfig(viewportWidth: number): DeckConfig {
+	if (viewportWidth >= 1024) {
+		return DESKTOP_DECK;
+	}
+	if (viewportWidth >= 640) {
+		return {
+			width: 460,
+			height: 460,
+			distance: 30,
+			vDistance: 30,
+			compensate: true,
+		};
+	}
+	return {
+		width: 260,
+		height: 360,
+		distance: 14,
+		vDistance: 14,
+		compensate: true,
+	};
+}
+
+function useDeckConfig(): DeckConfig {
+	const [config, setConfig] = useState<DeckConfig>(DESKTOP_DECK);
+
+	useEffect(() => {
+		const update = () => setConfig(getDeckConfig(window.innerWidth));
+		update();
+		window.addEventListener("resize", update);
+		return () => window.removeEventListener("resize", update);
+	}, []);
+
+	return config;
+}
+
 export default function WorksSection() {
 	const sectionRef = useRef<HTMLDivElement>(null);
 	const textRef = useRef<HTMLDivElement>(null);
 	const deckRef = useRef<HTMLDivElement>(null);
+	const deck = useDeckConfig();
 	const [decryptActive, setDecryptActive] = useState(false);
 	const [activeIndex, setActiveIndex] = useState(0);
+	const offsetX = ((PROJECTS.length - 1) * deck.distance) / 2;
+	const offsetY = ((PROJECTS.length - 1) * deck.vDistance) / 2;
 
 	useEffect(() => {
 		const sectionEl = sectionRef.current;
@@ -147,7 +201,7 @@ export default function WorksSection() {
 			id="works"
 			ref={sectionRef}
 		>
-			<div className="mx-auto grid w-full max-w-[1400px] grid-cols-1 items-center gap-16 px-6 lg:grid-cols-[40%_60%] lg:gap-24">
+			<div className="mx-auto grid w-full max-w-[1400px] grid-cols-1 items-center gap-16 px-6 lg:grid-cols-[2fr_3fr] lg:gap-24">
 				{/* Left Column: Heading and Info */}
 				<div className="flex flex-col items-start" ref={textRef}>
 					<span className="mb-6 block font-[family:var(--font-jetbrains-mono)] text-white/40 text-xs uppercase tracking-[0.3em]">
@@ -179,24 +233,34 @@ export default function WorksSection() {
 
 				{/* Right Column: CardSwap Stacked Deck */}
 				<div
-					className="relative flex h-[540px] w-full items-center justify-center lg:justify-end"
+					className="relative flex w-full items-center justify-center lg:justify-end"
 					ref={deckRef}
+					style={{ height: deck.height }}
 				>
-					<div className="relative mr-0 h-[540px] w-[700px] lg:mr-8">
+					<div
+						className="relative mr-0 lg:mr-8"
+						style={{
+							width: deck.width,
+							height: deck.height,
+							transform: deck.compensate
+								? `translate(${-offsetX}px, ${offsetY}px)`
+								: undefined,
+						}}
+					>
 						<CardSwap
-							cardDistance={55}
+							cardDistance={deck.distance}
 							delay={5000}
 							easing="elastic"
-							height={540}
+							height={deck.height}
 							onCardChange={(idx) => setActiveIndex(idx)}
 							pauseOnHover={true}
 							skewAmount={3}
-							verticalDistance={55}
-							width={700}
+							verticalDistance={deck.vDistance}
+							width={deck.width}
 						>
 							{PROJECTS.map((project, index) => (
 								<Card
-									className="flex h-full w-full select-none flex-col justify-between p-10"
+									className="flex h-full w-full select-none flex-col justify-between p-6 md:p-10"
 									key={project.title}
 								>
 									<div className="flex flex-col">
@@ -204,14 +268,14 @@ export default function WorksSection() {
 											<span className="font-[family:var(--font-jetbrains-mono)] text-white/40 text-xs uppercase tracking-[0.15em]">
 												{project.category}
 											</span>
-											<span className="font-[family:var(--font-jetbrains-mono)] font-bold text-3xl text-white/10 leading-none">
+											<span className="font-[family:var(--font-jetbrains-mono)] font-bold text-2xl text-white/10 leading-none md:text-3xl">
 												0{index + 1}
 											</span>
 										</div>
-										<h3 className="mt-8 font-[family:var(--font-jetbrains-mono)] font-medium text-4xl text-white tracking-tight">
+										<h3 className="mt-6 font-[family:var(--font-jetbrains-mono)] font-medium text-2xl text-white tracking-tight md:mt-8 md:text-4xl">
 											{project.title}
 										</h3>
-										<p className="mt-6 max-w-[32ch] font-[family:var(--font-jetbrains-mono)] text-base text-white/50 leading-relaxed">
+										<p className="mt-4 max-w-[32ch] font-[family:var(--font-jetbrains-mono)] text-sm text-white/50 leading-relaxed md:mt-6 md:text-base">
 											{project.description}
 										</p>
 									</div>
