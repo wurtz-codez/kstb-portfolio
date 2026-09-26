@@ -16,6 +16,9 @@ const LETTERS = [
 	{ char: "h", key: "h-first", isShort: false },
 ] as const;
 
+// Fraction of the original runtime to keep (0.6 = 40% faster).
+const LOADER_DURATION_FACTOR = 0.6;
+
 export default function IntroLoader({
 	children,
 }: {
@@ -46,6 +49,7 @@ export default function IntroLoader({
 			},
 		});
 		timelineRef.current = tl;
+		tl.timeScale(1 / LOADER_DURATION_FACTOR);
 
 		const hiddenLetters: HTMLSpanElement[] = [];
 		const shortWhiteLayers: HTMLSpanElement[] = [];
