@@ -2,8 +2,9 @@
 
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useEffect, useRef, useState } from "react";
-import CardSwap, { Card } from "./card-swap";
+import { ArrowLeft, ArrowRight } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import CardSwap, { Card, type CardSwapHandle } from "./card-swap";
 import { DecryptedText } from "./decrypted-text";
 import GlitchText from "./glitch-text";
 
@@ -120,9 +121,14 @@ export default function WorksSection() {
 	const sectionRef = useRef<HTMLDivElement>(null);
 	const textRef = useRef<HTMLDivElement>(null);
 	const deckRef = useRef<HTMLDivElement>(null);
+	const deckControlRef = useRef<CardSwapHandle>(null);
 	const deck = useDeckConfig();
 	const [decryptActive, setDecryptActive] = useState(false);
 	const [activeIndex, setActiveIndex] = useState(0);
+	const handleCardChange = useCallback(
+		(idx: number) => setActiveIndex(idx),
+		[]
+	);
 	const offsetX = ((PROJECTS.length - 1) * deck.distance) / 2;
 	const offsetY = ((PROJECTS.length - 1) * deck.vDistance) / 2;
 
@@ -229,6 +235,30 @@ export default function WorksSection() {
 							{PROJECTS[activeIndex]?.longDescription ?? ""}
 						</DecryptedText>
 					</div>
+
+					{/* Manual deck controls */}
+					<div className="mt-8 flex items-center gap-4 font-[family:var(--font-jetbrains-mono)]">
+						<button
+							aria-label="Previous project"
+							className="group flex h-11 w-11 items-center justify-center rounded-full border border-white/15 text-white/60 transition-colors hover:border-white/40 hover:text-white focus-visible:border-white/60 focus-visible:text-white focus-visible:outline-none"
+							onClick={() => deckControlRef.current?.prev()}
+							type="button"
+						>
+							<ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
+						</button>
+						<span className="text-white/40 text-xs tabular-nums">
+							{String(activeIndex + 1).padStart(2, "0")} /{" "}
+							{String(PROJECTS.length).padStart(2, "0")}
+						</span>
+						<button
+							aria-label="Next project"
+							className="group flex h-11 w-11 items-center justify-center rounded-full border border-white/15 text-white/60 transition-colors hover:border-white/40 hover:text-white focus-visible:border-white/60 focus-visible:text-white focus-visible:outline-none"
+							onClick={() => deckControlRef.current?.next()}
+							type="button"
+						>
+							<ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+						</button>
+					</div>
 				</div>
 
 				{/* Right Column: CardSwap Stacked Deck */}
@@ -252,8 +282,9 @@ export default function WorksSection() {
 							delay={5000}
 							easing="elastic"
 							height={deck.height}
-							onCardChange={(idx) => setActiveIndex(idx)}
+							onCardChange={handleCardChange}
 							pauseOnHover={true}
+							ref={deckControlRef}
 							skewAmount={3}
 							verticalDistance={deck.vDistance}
 							width={deck.width}
