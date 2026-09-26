@@ -64,10 +64,12 @@ function MagneticLink({
 	href,
 	children,
 	external = false,
+	onClick,
 }: {
 	href: string;
 	children: React.ReactNode;
 	external?: boolean;
+	onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
 }) {
 	const linkRef = useRef<HTMLAnchorElement>(null);
 	const arrowRef = useRef<HTMLSpanElement>(null);
@@ -137,6 +139,7 @@ function MagneticLink({
 		<a
 			className="relative inline-flex items-center gap-2 py-1.5 no-underline"
 			href={href}
+			onClick={onClick}
 			onPointerEnter={handlePointerEnter}
 			onPointerLeave={handlePointerLeave}
 			onPointerMove={handlePointerMove}
@@ -472,6 +475,27 @@ export default function Footer() {
 	const [sectionsVisible, setSectionsVisible] = useState(false);
 	const istTime = useISTClock();
 
+	const handleNavClick = useCallback(
+		(e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+			if (href.startsWith("mailto:") || href.startsWith("http")) {
+				return;
+			}
+			e.preventDefault();
+			const hash = href.includes("#") ? href.split("#")[1] : "";
+			if (!hash) {
+				window.scrollTo({ top: 0, behavior: "smooth" });
+				return;
+			}
+			const target = document.getElementById(hash);
+			if (target) {
+				target.scrollIntoView({ behavior: "smooth" });
+			} else {
+				window.location.href = href;
+			}
+		},
+		[]
+	);
+
 	useEffect(() => {
 		const el = footerRef.current;
 		if (!el) {
@@ -626,7 +650,11 @@ export default function Footer() {
 							</div>
 							<div className="flex flex-col items-start gap-1">
 								{NAV_LINKS.map((link) => (
-									<MagneticLink href={link.href} key={link.label}>
+									<MagneticLink
+										href={link.href}
+										key={link.label}
+										onClick={(e) => handleNavClick(e, link.href)}
+									>
 										{link.label}
 									</MagneticLink>
 								))}
