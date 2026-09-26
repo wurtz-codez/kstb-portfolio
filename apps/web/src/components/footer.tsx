@@ -24,7 +24,7 @@ const SELECTED_WORKS = [
 	{ label: "Jewelry by LUNA", href: "https://www.jewelrybyluna.in" },
 	{
 		label: "ALLROUND",
-		href: "https://github.com/singularityworks-xyz/ALLROUND",
+		href: "https://allroundpmc.com/",
 	},
 ] as const;
 
