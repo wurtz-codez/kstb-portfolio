@@ -3,8 +3,14 @@
 import gsap from "gsap";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import BottomText from "@/components/bottom-text";
 import { useLoader } from "@/contexts/loader-context";
+
+const SKILLS = [
+	"TypeScript",
+	"React / Next.js",
+	"Node.js",
+	"Applied AI",
+] as const;
 
 /**
  * SVG path data for each letter of "koustubh" extracted from JetBrains Mono Bold.
@@ -152,44 +158,17 @@ export default function HeroSection() {
 	}
 
 	return (
-		<div
+		<section
+			aria-labelledby="hero-heading"
+			className="relative flex min-h-svh w-full items-center px-6 py-28 text-white sm:px-10 sm:py-32"
 			ref={containerRef}
 			style={{
-				position: "sticky",
-				top: 0,
-				width: "100%",
-				height: "100svh",
 				opacity: 0,
 				pointerEvents: loaderComplete ? "auto" : "none",
 			}}
 		>
-			<div
-				style={{
-					position: "relative",
-					zIndex: 1,
-					width: "100%",
-					height: "100%",
-					display: "flex",
-					alignItems: "center",
-					justifyContent: "center",
-				}}
-			>
-				<div style={{ position: "relative" }}>
-					{/* <span
-						style={{
-							position: "absolute",
-							bottom: "100%",
-							left: "-20%",
-							marginBottom: "0.25em",
-							fontFamily: "var(--font-telma)",
-							fontStyle: "italic",
-							fontSize: "clamp(1.25rem, 4vw, 2rem)",
-							color: "rgba(255, 255, 255, 0.8)",
-							whiteSpace: "nowrap",
-						}}
-					>
-						hey, i&apos;m
-					</span> */}
+			<div className="relative z-10 mx-auto w-full max-w-[1100px]">
+				<div className="mb-6">
 					<div
 						aria-hidden="true"
 						onBlur={handleMouseLeave}
@@ -200,7 +179,7 @@ export default function HeroSection() {
 						style={{
 							cursor: "default",
 							userSelect: "none",
-							width: "clamp(180px, 70vw, 600px)",
+							width: "clamp(160px, 30vw, 260px)",
 						}}
 					>
 						<svg
@@ -228,8 +207,57 @@ export default function HeroSection() {
 						</svg>
 					</div>
 				</div>
-				<BottomText />
+				<p className="mb-5 text-sm text-white/70 leading-relaxed">
+					Koustubh Pande · Software Engineer &amp; Founding Engineer
+				</p>
+				<h1
+					className="max-w-[28ch] text-balance font-medium text-4xl leading-[1.1] tracking-tight sm:text-5xl lg:text-6xl"
+					id="hero-heading"
+				>
+					Building <span className="whitespace-nowrap">AI-powered</span>{" "}
+					products, from architecture to deployment.
+				</h1>
+				<p className="mt-6 max-w-[74ch] text-base text-white/70 leading-relaxed sm:text-lg">
+					I&apos;m a software engineer and founding engineer working across
+					full-stack development, backend systems, and applied AI. I build
+					developer tools, LLM-powered workflows, and products designed for
+					real-world use.
+				</p>
+				<ul aria-label="Core skills" className="mt-6 flex flex-wrap gap-2">
+					{SKILLS.map((skill) => (
+						<li
+							className="rounded-full border border-white/20 px-3 py-1.5 text-sm text-white/80"
+							key={skill}
+						>
+							{skill}
+						</li>
+					))}
+				</ul>
+				<div className="mt-8 flex flex-wrap gap-3">
+					<a
+						className="inline-flex min-h-11 items-center justify-center rounded-full bg-white px-5 py-3 font-medium text-black text-sm transition-colors hover:bg-white/85 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-4"
+						href="#works"
+					>
+						View Projects
+					</a>
+					<a
+						className="inline-flex min-h-11 items-center justify-center rounded-full border border-white/30 px-5 py-3 font-medium text-sm transition-colors hover:border-white hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-4"
+						download="koustubh-resume.pdf"
+						href="/koustubh_resume.pdf"
+					>
+						Download Resume
+					</a>
+					<a
+						className="inline-flex min-h-11 items-center justify-center rounded-full border border-white/30 px-5 py-3 font-medium text-sm transition-colors hover:border-white hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-4"
+						href="mailto:koustubhpande021@gmail.com"
+					>
+						Contact Me
+					</a>
+				</div>
+				<p className="mt-8 text-sm text-white/60 leading-relaxed">
+					turning &quot;what if...&quot; into repositories
+				</p>
 			</div>
-		</div>
+		</section>
 	);
 }

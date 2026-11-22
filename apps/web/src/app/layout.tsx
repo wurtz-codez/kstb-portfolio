@@ -11,8 +11,9 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-	title: "Koustubh Pande",
-	description: "This is who I am.",
+	title: "Koustubh Pande | Software Engineer & Founding Engineer",
+	description:
+		"Software engineer and founding engineer building AI-powered products, developer tools, and LLM-powered workflows across full-stack development and backend systems.",
 };
 
 export default function RootLayout({

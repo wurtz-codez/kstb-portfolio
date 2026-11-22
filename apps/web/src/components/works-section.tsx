@@ -13,31 +13,35 @@ gsap.registerPlugin(ScrollTrigger);
 const PROJECTS = [
 	{
 		title: "Qode",
-		description: "The nervous system for visual codebase exploration.",
+		subtitle: "Local-First Codebase Intelligence",
+		description:
+			"Explore unfamiliar repositories through dependency graphs and keyword + semantic retrieval.",
 		longDescription:
-			"Qode is a specialized engine for mapping complex codebases into interactive visual graphs. It leverages tree-sitter and sigma.js to let developers see the actual architecture of their software, identifying bottlenecks and dead code through data-driven visualization.",
+			"Qode is a local-first developer tool that parses repositories into interactive dependency graphs. It combines keyword and semantic retrieval to help engineers navigate unfamiliar codebases, with Tree-sitter for parsing and Sigma.js for graph visualization.",
 		category: "work",
 		tags: ["Next.js", "Tree-sitter", "Sigma.js", "LLM", "AI", "TS"],
 		github: "https://github.com/wurtz-codez/Qode",
 		live: "https://qode-beta.vercel.app/home",
 	},
 	{
-		title: "verq",
+		title: "VerQ",
+		subtitle: "AI Interview Practice Platform",
 		description:
-			"A comprehensive AI-based platform designed to simplify workflows.",
+			"Practice resume-based interviews with spoken answers and structured AI feedback.",
 		longDescription:
-			"Verq is an integrated workspace that automates repetitive engineering tasks using custom LLM agents. It bridges the gap between project management and code execution, allowing teams to go from high-level requirements to PR-ready code in minutes.",
+			"VerQ is an AI-powered interview practice platform that turns a candidate's resume into personalized interview questions, processes spoken answers, and generates structured feedback using Gemini and Deepgram. It helps candidates practice interviews tailored to their experience.",
 		category: "work",
-		tags: ["Next.js", "AI", "React"],
+		tags: ["Next.js", "Gemini", "Deepgram", "React"],
 		github: "https://github.com/wurtz-codez/verq",
 		live: "https://verqai.vercel.app",
 	},
 	{
 		title: "Arkaiv",
+		subtitle: "AI Model & Tool Discovery",
 		description:
-			"AI-based search, discovery, and curation engine for models and tools.",
+			"Find AI models and developer tools through a curated catalog and semantic search.",
 		longDescription:
-			"Arkaiv serves as a high-performance discovery layer for the rapidly evolving AI ecosystem. It curates state-of-the-art models and developer tools, providing semantic search capabilities that help engineers find the exact components needed for their next project.",
+			"Arkaiv brings AI models and developer tools into a curated catalog with semantic search. It helps engineers discover relevant components for their projects without searching across separate directories.",
 		category: "work",
 		tags: ["Discovery", "AI", "Tailwind"],
 		github: "https://github.com/wurtz-codez/arkaiv",
@@ -45,10 +49,11 @@ const PROJECTS = [
 	},
 	{
 		title: "Jewelry by LUNA",
+		subtitle: "Jewelry E-commerce",
 		description:
-			"E-commerce platform showcasing premium, curated jewelry collections.",
+			"Browse curated jewelry collections and purchase through an integrated checkout.",
 		longDescription:
-			"A premium digital storefront designed for the luxury jewelry market. This project focuses on high-fidelity visual storytelling, utilizing smooth transition logic and a custom checkout flow to mirror the physical elegance of the curated collections.",
+			"Jewelry by LUNA is a React storefront for browsing curated jewelry collections and completing purchases through a custom checkout flow. Product presentation and page transitions support the shopping experience, with Stripe handling payments.",
 		category: "work",
 		tags: ["E-commerce", "React", "Stripe"],
 		github: "https://github.com/wurtz-codez/Jewelry-by-LUNA",
@@ -56,9 +61,11 @@ const PROJECTS = [
 	},
 	{
 		title: "ALLROUND",
-		description: "Private software engine for multi-agent coordination.",
+		subtitle: "Multi-Agent Coordination",
+		description:
+			"Coordinate AI agents through shared state, real-time communication, and task delegation.",
 		longDescription:
-			"ALLROUND is a low-latency coordination engine built for multi-agent systems. It handles the real-time communication, state synchronization, and task delegation required for complex AI swarms to operate autonomously across distributed environments.",
+			"ALLROUND is a private TypeScript and Bun engine for coordinating multiple AI agents. It handles real-time communication, state synchronization, and task delegation so agents can share progress and work across distributed environments.",
 		category: "project",
 		tags: ["Agentic", "TS", "Bun"],
 		github: "https://github.com/singularityworks-xyz/ALLROUND",
@@ -97,7 +104,7 @@ function getDeckConfig(viewportWidth: number): DeckConfig {
 	}
 	return {
 		width: 260,
-		height: 360,
+		height: 460,
 		distance: 14,
 		vDistance: 14,
 		compensate: true,
@@ -306,7 +313,10 @@ export default function WorksSection() {
 										<h3 className="mt-6 font-[family:var(--font-jetbrains-mono)] font-medium text-2xl text-white tracking-tight md:mt-8 md:text-4xl">
 											{project.title}
 										</h3>
-										<p className="mt-4 max-w-[32ch] font-[family:var(--font-jetbrains-mono)] text-sm text-white/50 leading-relaxed md:mt-6 md:text-base">
+										<p className="mt-2 font-[family:var(--font-jetbrains-mono)] font-medium text-sm text-white/80 md:text-base">
+											{project.subtitle}
+										</p>
+										<p className="mt-3 max-w-[40ch] font-[family:var(--font-jetbrains-mono)] text-sm text-white/60 leading-relaxed md:mt-4 md:text-base">
 											{project.description}
 										</p>
 									</div>
