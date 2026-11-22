@@ -18,8 +18,15 @@ import {
 	useSphericalJoint,
 } from "@react-three/rapier";
 import { MeshLineGeometry, MeshLineMaterial } from "meshline";
-import { useEffect, useRef, useState } from "react";
-import { CatmullRomCurve3, Color, RepeatWrapping, Vector3 } from "three";
+import { useCallback, useEffect, useRef, useState } from "react";
+import {
+	CatmullRomCurve3,
+	Color,
+	RepeatWrapping,
+	SRGBColorSpace,
+	Vector3,
+	type WebGLRenderer,
+} from "three";
 
 import "./lanyard.css";
 
@@ -43,6 +50,11 @@ export default function Lanyard({
 	const [isMobile, setIsMobile] = useState<boolean>(
 		() => typeof window !== "undefined" && window.innerWidth < 768
 	);
+	// React StrictMode and Fast Refresh unmount the canvas once, which calls
+	// WebGLRenderer.forceContextLoss() on the reused <canvas> element. A lost
+	// context can never be revived, so the canvas is recreated instead.
+	const [canvasKey, setCanvasKey] = useState(0);
+	const restartsRef = useRef(0);
 
 	useEffect(() => {
 		const handleResize = (): void => setIsMobile(window.innerWidth < 768);
@@ -50,15 +62,30 @@ export default function Lanyard({
 		return () => window.removeEventListener("resize", handleResize);
 	}, []);
 
+	const handleCreated = useCallback(
+		({ gl }: { gl: WebGLRenderer }) => {
+			gl.setClearColor(new Color(0x00_00_00), transparent ? 0 : 1);
+			let handled = false;
+			gl.domElement.addEventListener("webglcontextlost", () => {
+				if (handled || restartsRef.current >= 3) {
+					return;
+				}
+				handled = true;
+				restartsRef.current += 1;
+				setCanvasKey((key) => key + 1);
+			});
+		},
+		[transparent]
+	);
+
 	return (
 		<div className="lanyard-wrapper">
 			<Canvas
 				camera={{ position, fov }}
 				dpr={[1, isMobile ? 1.5 : 2]}
 				gl={{ alpha: transparent }}
-				onCreated={({ gl }) =>
-					gl.setClearColor(new Color(0x00_00_00), transparent ? 0 : 1)
-				}
+				key={canvasKey}
+				onCreated={handleCreated}
 			>
 				<ambientLight intensity={Math.PI} />
 				<Physics gravity={gravity} timeStep={isMobile ? 1 / 30 : 1 / 60}>
@@ -144,6 +171,7 @@ function Band({
 	const texture = useTexture("/lanyard.png");
 	const cardTexture = useTexture("/IMG_0894_2.jpg");
 	cardTexture.flipY = false;
+	cardTexture.colorSpace = SRGBColorSpace;
 	cardTexture.repeat.set(0.8, 0.8);
 	cardTexture.offset.set(0.3, 0.15);
 	const [curve] = useState(

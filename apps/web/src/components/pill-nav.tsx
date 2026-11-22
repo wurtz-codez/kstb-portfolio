@@ -368,13 +368,13 @@ export default function PillNav({
 			>
 				{leftItems.length > 0 && (
 					<div
-						className="nav-pill-group relative flex h-[42px] items-center rounded-full bg-white max-md:hidden dark:bg-black"
+						className="nav-pill-group relative flex h-[42px] items-center max-md:hidden"
 						ref={(el) => {
 							navItemsRefs.current[0] = el;
 						}}
 					>
 						<ul
-							className="m-0 flex h-full list-none items-stretch gap-[3px] p-[3px]"
+							className="m-0 flex h-full list-none items-stretch gap-2 p-0"
 							style={{ fontFamily: "var(--font-jetbrains-mono), monospace" }}
 						>
 							{leftItems.map((item, localIndex) => {
@@ -458,13 +458,13 @@ export default function PillNav({
 
 				{rightItems.length > 0 && (
 					<div
-						className="nav-pill-group relative flex h-[42px] items-center rounded-full bg-white max-md:hidden dark:bg-black"
+						className="nav-pill-group relative flex h-[42px] items-center max-md:hidden"
 						ref={(el) => {
 							navItemsRefs.current[1] = el;
 						}}
 					>
 						<ul
-							className="m-0 flex h-full list-none items-stretch gap-[3px] p-[3px]"
+							className="m-0 flex h-full list-none items-stretch gap-2 p-0"
 							style={{ fontFamily: "var(--font-jetbrains-mono), monospace" }}
 						>
 							{rightItems.map((item, localIndex) => {
@@ -528,7 +528,7 @@ export default function PillNav({
 				)}
 
 				<a
-					className="relative z-10 ml-auto inline-flex h-[42px] items-center justify-center rounded-full bg-white px-4 font-semibold text-black text-sm uppercase tracking-wide transition-colors hover:bg-white/85 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-4"
+					className="pill z-10 h-[42px] hover:bg-white/85 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-4 max-md:ml-auto"
 					download="koustubh-resume.pdf"
 					href="/koustubh_resume.pdf"
 				>
