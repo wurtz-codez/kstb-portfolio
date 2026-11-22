@@ -2,10 +2,14 @@
 
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useEffect, useRef } from "react";
+import dynamic from "next/dynamic";
+import { useEffect, useRef, useState } from "react";
 import { useLoader } from "@/contexts/loader-context";
-import Lanyard from "./lanyard";
 import RotatingText from "./rotating-text";
+
+// Three.js, Rapier and the card assets are heavy and only needed once this
+// section approaches the viewport, so they are loaded on demand.
+const Lanyard = dynamic(() => import("./lanyard"), { ssr: false });
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -41,12 +45,33 @@ export default function AboutSection() {
 	const headingRef = useRef<HTMLHeadingElement>(null);
 	const pContainerRef = useRef<HTMLDivElement>(null);
 	const gridRef = useRef<HTMLDivElement>(null);
+	const [shouldRenderLanyard, setShouldRenderLanyard] = useState(false);
 
 	useEffect(() => {
 		if (loaderComplete) {
 			ScrollTrigger.refresh();
 		}
 	}, [loaderComplete]);
+
+	useEffect(() => {
+		const container = cardContainerRef.current;
+		if (!(container && !shouldRenderLanyard)) {
+			return;
+		}
+
+		const observer = new IntersectionObserver(
+			(entries) => {
+				if (entries.some((entry) => entry.isIntersecting)) {
+					setShouldRenderLanyard(true);
+					observer.disconnect();
+				}
+			},
+			{ rootMargin: "600px 0px" }
+		);
+
+		observer.observe(container);
+		return () => observer.disconnect();
+	}, [shouldRenderLanyard]);
 
 	useEffect(() => {
 		const sectionEl = sectionRef.current;
@@ -182,18 +207,22 @@ export default function AboutSection() {
 					className="flex h-[750px] w-full items-center justify-center lg:sticky lg:top-24"
 					ref={cardContainerRef}
 				>
-					<Lanyard
-						cardScale={5.04}
-						gravity={[0, -40, 0]}
-						position={[0, 0, 20]}
-					/>
+					{shouldRenderLanyard ? (
+						<Lanyard
+							cardScale={5.04}
+							gravity={[0, -40, 0]}
+							position={[0, 0, 20]}
+						/>
+					) : (
+						<div aria-hidden="true" className="h-full w-full" />
+					)}
 				</div>
 
 				{/* Right Column: Content */}
 				<div className="flex flex-col">
 					<div>
 						<span
-							className="mb-4 block font-[family:var(--font-jetbrains-mono)] text-white/40 text-xs uppercase tracking-[0.3em]"
+							className="mb-4 block font-[family:var(--font-jetbrains-mono)] text-white/60 text-xs uppercase tracking-[0.3em]"
 							ref={labelRef}
 						>
 							{COPY.label}
@@ -323,7 +352,7 @@ export default function AboutSection() {
 								<h3 className="mb-2 font-[family:var(--font-jetbrains-mono)] font-medium text-lg text-white transition-transform duration-300 group-hover:translate-x-1">
 									{item.category}
 								</h3>
-								<p className="font-[family:var(--font-jetbrains-mono)] text-white/50 text-xs tracking-wider transition-colors duration-300 group-hover:text-white/80">
+								<p className="font-[family:var(--font-jetbrains-mono)] text-white/60 text-xs tracking-wider transition-colors duration-300 group-hover:text-white/80">
 									{item.stack.join("  ·  ")}
 								</p>
 							</div>

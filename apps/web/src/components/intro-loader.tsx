@@ -24,8 +24,7 @@ export default function IntroLoader({
 }: {
 	children: React.ReactNode;
 }) {
-	const { isLoading, isFadingOut, startFadeOut, setLoaderComplete } =
-		useLoader();
+	const { isLoading, startFadeOut, setLoaderComplete } = useLoader();
 	const [shouldAnimate, setShouldAnimate] = useState(false);
 	const topPanelRef = useRef<HTMLDivElement>(null);
 	const bottomPanelRef = useRef<HTMLDivElement>(null);
@@ -270,7 +269,6 @@ export default function IntroLoader({
 			)}
 			<div
 				style={{
-					visibility: isLoading && !isFadingOut ? "hidden" : "visible",
 					height: "100%",
 				}}
 			>

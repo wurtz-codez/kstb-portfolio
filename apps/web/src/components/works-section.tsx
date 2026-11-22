@@ -233,7 +233,7 @@ export default function WorksSection() {
 			<div className="mx-auto grid w-full max-w-[1400px] grid-cols-1 items-center gap-16 px-6 lg:grid-cols-[2fr_3fr] lg:gap-24">
 				{/* Left Column: Heading and Info */}
 				<div className="flex flex-col items-start" ref={textRef}>
-					<span className="mb-6 block font-[family:var(--font-jetbrains-mono)] text-white/40 text-xs uppercase tracking-[0.3em]">
+					<span className="mb-6 block font-[family:var(--font-jetbrains-mono)] text-white/60 text-xs uppercase tracking-[0.3em]">
 						Works
 					</span>
 					<div className="mb-4 flex flex-col items-start leading-tight">
@@ -283,19 +283,19 @@ export default function WorksSection() {
 					<div className="mt-8 flex items-center gap-4 font-[family:var(--font-jetbrains-mono)]">
 						<button
 							aria-label="Previous project"
-							className="group flex h-11 w-11 items-center justify-center rounded-full border border-white/15 text-white/60 transition-colors hover:border-white/40 hover:text-white focus-visible:border-white/60 focus-visible:text-white focus-visible:outline-none"
+							className="group flex h-11 w-11 items-center justify-center rounded-full border border-white/15 text-white/60 transition-colors hover:border-white/40 hover:text-white focus-visible:border-white/60 focus-visible:text-white focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-4"
 							onClick={() => deckControlRef.current?.prev()}
 							type="button"
 						>
 							<ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
 						</button>
-						<span className="text-white/40 text-xs tabular-nums">
+						<span className="text-white/60 text-xs tabular-nums">
 							{String(activeIndex + 1).padStart(2, "0")} /{" "}
 							{String(PROJECTS.length).padStart(2, "0")}
 						</span>
 						<button
 							aria-label="Next project"
-							className="group flex h-11 w-11 items-center justify-center rounded-full border border-white/15 text-white/60 transition-colors hover:border-white/40 hover:text-white focus-visible:border-white/60 focus-visible:text-white focus-visible:outline-none"
+							className="group flex h-11 w-11 items-center justify-center rounded-full border border-white/15 text-white/60 transition-colors hover:border-white/40 hover:text-white focus-visible:border-white/60 focus-visible:text-white focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-4"
 							onClick={() => deckControlRef.current?.next()}
 							type="button"
 						>
@@ -339,7 +339,7 @@ export default function WorksSection() {
 								>
 									<div className="flex flex-col">
 										<div className="flex items-start justify-between">
-											<span className="font-[family:var(--font-jetbrains-mono)] text-white/40 text-xs uppercase tracking-[0.15em]">
+											<span className="font-[family:var(--font-jetbrains-mono)] text-white/60 text-xs uppercase tracking-[0.15em]">
 												{project.category}
 											</span>
 											<span className="font-[family:var(--font-jetbrains-mono)] font-bold text-2xl text-white/10 leading-none md:text-3xl">
@@ -361,7 +361,7 @@ export default function WorksSection() {
 										<div className="flex flex-wrap gap-2">
 											{project.tags.map((tag) => (
 												<span
-													className="rounded-full border border-white/5 bg-white/5 px-2.5 py-1 font-[family:var(--font-jetbrains-mono)] text-[10px] text-white/40 uppercase tracking-wide"
+													className="rounded-full border border-white/5 bg-white/5 px-2.5 py-1 font-[family:var(--font-jetbrains-mono)] text-[10px] text-white/60 uppercase tracking-wide"
 													key={tag}
 												>
 													{tag}
@@ -372,7 +372,7 @@ export default function WorksSection() {
 										<div className="flex flex-wrap items-center gap-x-4 gap-y-3 border-white/5 border-t pt-4">
 											{project.github && (
 												<a
-													className="font-[family:var(--font-jetbrains-mono)] text-white/60 text-xs underline underline-offset-4 transition-colors hover:text-white"
+													className="inline-flex min-h-6 items-center font-[family:var(--font-jetbrains-mono)] text-white/60 text-xs underline underline-offset-4 transition-colors hover:text-white"
 													href={project.github}
 													rel="noopener noreferrer"
 													target="_blank"
@@ -392,7 +392,7 @@ export default function WorksSection() {
 											)}
 											{project.live && (
 												<a
-													className="flex items-center gap-1 font-[family:var(--font-jetbrains-mono)] text-white/60 text-xs underline underline-offset-4 transition-colors hover:text-white"
+													className="inline-flex min-h-6 items-center gap-1 font-[family:var(--font-jetbrains-mono)] text-white/60 text-xs underline underline-offset-4 transition-colors hover:text-white"
 													href={project.live}
 													rel="noopener noreferrer"
 													target="_blank"
@@ -403,7 +403,7 @@ export default function WorksSection() {
 											{"caseStudy" in project && (
 												<Link
 													aria-label={`Read ${project.title} case study`}
-													className="text-sm text-white/80 underline underline-offset-4 hover:text-white"
+													className="inline-flex min-h-6 items-center text-sm text-white/80 underline underline-offset-4 hover:text-white"
 													href={project.caseStudy}
 												>
 													case study

@@ -43,7 +43,7 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
 					className="flex flex-wrap items-center justify-between gap-4 border-white/15 border-b pb-6 text-sm"
 				>
 					<Link
-						className="py-2 underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-4"
+						className="inline-flex min-h-6 items-center py-2 underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-4"
 						href="/#works"
 					>
 						Back to projects
@@ -133,7 +133,7 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
 								{study.sources.map((source) => (
 									<li key={source.href}>
 										<a
-											className="underline underline-offset-4 hover:text-white focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-4"
+											className="inline-flex min-h-6 items-center underline underline-offset-4 hover:text-white focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-4"
 											href={source.href}
 											rel="noopener noreferrer"
 											target="_blank"
@@ -149,7 +149,7 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
 				<footer className="flex flex-wrap justify-between gap-4 border-white/15 border-t py-8 text-sm text-white/70">
 					<p>© 2026 Koustubh Pande</p>
 					<a
-						className="underline underline-offset-4"
+						className="inline-flex min-h-6 items-center underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-4"
 						href="mailto:koustubhpande021@gmail.com"
 					>
 						Discuss a project

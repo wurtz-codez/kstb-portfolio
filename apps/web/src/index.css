@@ -237,6 +237,13 @@
 	}
 }
 
+@layer base {
+	:focus-visible {
+		outline: 2px solid rgb(255 255 255 / 0.9);
+		outline-offset: 3px;
+	}
+}
+
 @media (prefers-reduced-motion: reduce) {
 	.spotlight-overlay {
 		animation: none !important;

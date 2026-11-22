@@ -700,7 +700,7 @@ export default function Footer() {
 						{/* Email */}
 						<div className="group">
 							<a
-								className="inline-flex items-center gap-2 no-underline transition-colors"
+								className="inline-flex min-h-6 items-center gap-2 no-underline transition-colors focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-4"
 								href="mailto:koustubhpande021@gmail.com"
 								style={{
 									fontSize: "clamp(0.85rem, 1.5vw, 1rem)",
