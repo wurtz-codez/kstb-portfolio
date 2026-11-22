@@ -165,58 +165,63 @@ export default function WorksSection() {
 			return;
 		}
 
-		const ctx = gsap.context(() => {
-			const tl = gsap.timeline({
-				scrollTrigger: {
-					trigger: sectionEl,
-					start: "top bottom", // Starts when top of section enters bottom of viewport
-					end: "bottom bottom", // Ends when bottom of section reaches bottom of viewport
-					scrub: 1.2,
-				},
-			});
+		const media = gsap.matchMedia();
+		media.add(
+			"(prefers-reduced-motion: no-preference)",
+			() => {
+				const tl = gsap.timeline({
+					scrollTrigger: {
+						trigger: sectionEl,
+						start: "top bottom", // Starts when top of section enters bottom of viewport
+						end: "bottom bottom", // Ends when bottom of section reaches bottom of viewport
+						scrub: 1.2,
+					},
+				});
 
-			const textChildren = textRef.current?.children;
-			if (textChildren) {
-				tl.fromTo(
-					textChildren,
-					{
-						filter: "blur(12px)",
-						y: 40,
-						opacity: 0,
-					},
-					{
-						filter: "blur(0px)",
-						y: 0,
-						opacity: 1,
-						stagger: 0.25,
-						duration: 1.2,
-						ease: "power2.out",
-					}
-				);
-			}
+				const textChildren = textRef.current?.children;
+				if (textChildren) {
+					tl.fromTo(
+						textChildren,
+						{
+							filter: "blur(12px)",
+							y: 40,
+							opacity: 0,
+						},
+						{
+							filter: "blur(0px)",
+							y: 0,
+							opacity: 1,
+							stagger: 0.25,
+							duration: 1.2,
+							ease: "power2.out",
+						}
+					);
+				}
 
-			if (deckRef.current) {
-				tl.fromTo(
-					deckRef.current,
-					{
-						opacity: 0,
-						scale: 0.8,
-						y: 100,
-					},
-					{
-						opacity: 1,
-						scale: 1,
-						y: 0,
-						duration: 1.5,
-						ease: "power3.out",
-					},
-					"-=0.8"
-				);
-			}
-		}, sectionEl);
+				if (deckRef.current) {
+					tl.fromTo(
+						deckRef.current,
+						{
+							opacity: 0,
+							scale: 0.8,
+							y: 100,
+						},
+						{
+							opacity: 1,
+							scale: 1,
+							y: 0,
+							duration: 1.5,
+							ease: "power3.out",
+						},
+						"-=0.8"
+					);
+				}
+			},
+			sectionEl
+		);
 
 		return () => {
-			ctx.revert();
+			media.revert();
 		};
 	}, []);
 

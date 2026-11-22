@@ -15,6 +15,7 @@ import React, {
 	useMemo,
 	useRef,
 } from "react";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import "./card-swap.css";
 
 export interface CardSwapProps {
@@ -101,6 +102,7 @@ const CardSwap = forwardRef<CardSwapHandle, CardSwapProps>(
 		},
 		ref
 	) => {
+		const reducedMotion = useReducedMotion();
 		const config = useMemo(
 			() =>
 				easing === "elastic"
@@ -127,6 +129,30 @@ const CardSwap = forwardRef<CardSwapHandle, CardSwapProps>(
 		const intervalRef = useRef<number>(0);
 		const container = useRef<HTMLDivElement>(null);
 		const total = refs.length;
+
+		useEffect(() => {
+			if (!reducedMotion) {
+				return;
+			}
+			tlRef.current?.kill();
+			for (const [slotIndex, cardIndex] of order.current.entries()) {
+				const el = refs[cardIndex].current;
+				if (el) {
+					placeNow(
+						el,
+						makeSlot(slotIndex, cardDistance, verticalDistance, total),
+						skewAmount
+					);
+				}
+			}
+		}, [
+			reducedMotion,
+			refs,
+			cardDistance,
+			verticalDistance,
+			total,
+			skewAmount,
+		]);
 
 		// Place cards and reset the stack whenever the geometry changes.
 		useEffect(() => {
@@ -157,7 +183,7 @@ const CardSwap = forwardRef<CardSwapHandle, CardSwapProps>(
 				order.current = nextOrder;
 
 				tlRef.current?.kill();
-				const tl = gsap.timeline();
+				const tl = reducedMotion ? null : gsap.timeline();
 				tlRef.current = tl;
 
 				nextOrder.forEach((cardIndex, slotIndex) => {
@@ -171,7 +197,11 @@ const CardSwap = forwardRef<CardSwapHandle, CardSwapProps>(
 						verticalDistance,
 						total
 					);
-					tl.to(
+					if (reducedMotion) {
+						placeNow(el, slot, skewAmount);
+						return;
+					}
+					tl?.to(
 						el,
 						{
 							x: slot.x,
@@ -187,13 +217,25 @@ const CardSwap = forwardRef<CardSwapHandle, CardSwapProps>(
 
 				onCardChange?.(nextOrder[0]);
 			},
-			[cardDistance, verticalDistance, config, onCardChange, refs, total]
+			[
+				cardDistance,
+				verticalDistance,
+				config,
+				onCardChange,
+				refs,
+				total,
+				reducedMotion,
+				skewAmount,
+			]
 		);
 
 		const startAuto = useCallback(() => {
 			clearInterval(intervalRef.current);
+			if (reducedMotion) {
+				return;
+			}
 			intervalRef.current = window.setInterval(() => runSwap("next"), delay);
-		}, [delay, runSwap]);
+		}, [delay, runSwap, reducedMotion]);
 
 		useEffect(() => {
 			startAuto();

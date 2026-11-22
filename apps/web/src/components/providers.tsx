@@ -11,28 +11,33 @@ import { Toaster } from "./ui/sonner";
 export default function Providers({ children }: { children: React.ReactNode }) {
 	useEffect(() => {
 		gsap.registerPlugin(ScrollTrigger);
-		const lenis = new Lenis({
-			smoothWheel: true,
+		const media = gsap.matchMedia();
+		media.add("(prefers-reduced-motion: no-preference)", () => {
+			const lenis = new Lenis({ smoothWheel: true });
+
+			const onLenisScroll = () => {
+				ScrollTrigger.update();
+			};
+
+			lenis.on("scroll", onLenisScroll);
+
+			let rafId = 0;
+			const raf = (time: number) => {
+				lenis.raf(time);
+				rafId = requestAnimationFrame(raf);
+			};
+
+			rafId = requestAnimationFrame(raf);
+
+			return () => {
+				cancelAnimationFrame(rafId);
+				lenis.off("scroll", onLenisScroll);
+				lenis.stop();
+				lenis.destroy();
+			};
 		});
 
-		const onLenisScroll = () => {
-			ScrollTrigger.update();
-		};
-
-		lenis.on("scroll", onLenisScroll);
-
-		const raf = (time: number) => {
-			lenis.raf(time);
-			requestAnimationFrame(raf);
-		};
-
-		const rafId = requestAnimationFrame(raf);
-
-		return () => {
-			lenis.off("scroll", onLenisScroll);
-			lenis.destroy();
-			cancelAnimationFrame(rafId);
-		};
+		return () => media.revert();
 	}, []);
 
 	return (

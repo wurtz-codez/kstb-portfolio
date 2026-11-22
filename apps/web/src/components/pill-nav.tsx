@@ -4,6 +4,7 @@ import gsap from "gsap";
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
 interface NavItem {
 	label: string;
@@ -33,6 +34,7 @@ export default function PillNav({
 	pillTextColor,
 	initialLoadAnimation = true,
 }: PillNavProps) {
+	const reducedMotion = useReducedMotion();
 	const resolvedPillTextColor = pillTextColor ?? baseColor;
 	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 	const circleRefs = useRef<(HTMLSpanElement | null)[]>([]);
@@ -92,6 +94,7 @@ export default function PillNav({
 			}
 
 			tlRefs.current[index]?.kill();
+			activeTweenRefs.current[index]?.kill();
 			const tl = gsap.timeline({ paused: true });
 
 			tl.to(
@@ -149,7 +152,10 @@ export default function PillNav({
 			gsap.set(menu, { visibility: "hidden", opacity: 0, scaleY: 1 });
 		}
 
-		if (initialLoadAnimationRef.current) {
+		if (
+			initialLoadAnimationRef.current &&
+			!window.matchMedia("(prefers-reduced-motion: reduce)").matches
+		) {
 			const logoEl = logoRef.current;
 			const navGroups = navItemsRefs.current.filter(Boolean);
 
@@ -175,7 +181,36 @@ export default function PillNav({
 		return () => window.removeEventListener("resize", onResize);
 	}, [layout]);
 
+	useEffect(() => {
+		if (!reducedMotion) {
+			return;
+		}
+		layout();
+		logoTweenRef.current?.kill();
+		if (logoSvgRef.current) {
+			gsap.set(logoSvgRef.current, { rotation: 0 });
+		}
+		const menu = mobileMenuRef.current;
+		if (menu) {
+			gsap.killTweensOf(menu);
+			gsap.set(menu, {
+				visibility: isMobileMenuOpen ? "visible" : "hidden",
+				opacity: isMobileMenuOpen ? 1 : 0,
+				y: 0,
+				scaleY: 1,
+			});
+		}
+		const lines = hamburgerRef.current?.querySelectorAll(".hamburger-line");
+		if (lines) {
+			gsap.killTweensOf(lines);
+			gsap.set(lines, { rotation: 0, y: 0 });
+		}
+	}, [reducedMotion, layout, isMobileMenuOpen]);
+
 	const handleEnter = (i: number) => {
+		if (reducedMotion) {
+			return;
+		}
 		const tl = tlRefs.current[i];
 		if (!tl) {
 			return;
@@ -189,6 +224,9 @@ export default function PillNav({
 	};
 
 	const handleLeave = (i: number) => {
+		if (reducedMotion) {
+			return;
+		}
 		const tl = tlRefs.current[i];
 		if (!tl) {
 			return;
@@ -202,6 +240,9 @@ export default function PillNav({
 	};
 
 	const handleLogoEnter = () => {
+		if (reducedMotion) {
+			return;
+		}
 		const svgEl = logoSvgRef.current;
 		if (!svgEl) {
 			return;
@@ -218,6 +259,8 @@ export default function PillNav({
 
 	const toggleMobileMenu = () => {
 		const newState = !isMobileMenuOpen;
+		const openDuration = reducedMotion ? 0 : 0.3;
+		const closeDuration = reducedMotion ? 0 : 0.2;
 		setIsMobileMenuOpen(newState);
 
 		const hamburger = hamburgerRef.current;
@@ -227,11 +270,31 @@ export default function PillNav({
 			const lines =
 				hamburger.querySelectorAll<HTMLSpanElement>(".hamburger-line");
 			if (newState) {
-				gsap.to(lines[0], { rotation: 45, y: 3, duration: 0.3, ease });
-				gsap.to(lines[1], { rotation: -45, y: -3, duration: 0.3, ease });
+				gsap.to(lines[0], {
+					rotation: 45,
+					y: 3,
+					duration: openDuration,
+					ease,
+				});
+				gsap.to(lines[1], {
+					rotation: -45,
+					y: -3,
+					duration: openDuration,
+					ease,
+				});
 			} else {
-				gsap.to(lines[0], { rotation: 0, y: 0, duration: 0.3, ease });
-				gsap.to(lines[1], { rotation: 0, y: 0, duration: 0.3, ease });
+				gsap.to(lines[0], {
+					rotation: 0,
+					y: 0,
+					duration: openDuration,
+					ease,
+				});
+				gsap.to(lines[1], {
+					rotation: 0,
+					y: 0,
+					duration: openDuration,
+					ease,
+				});
 			}
 		}
 
@@ -245,7 +308,7 @@ export default function PillNav({
 						opacity: 1,
 						y: 0,
 						scaleY: 1,
-						duration: 0.3,
+						duration: openDuration,
 						ease,
 						transformOrigin: "top center",
 					}
@@ -255,7 +318,7 @@ export default function PillNav({
 					opacity: 0,
 					y: 10,
 					scaleY: 1,
-					duration: 0.2,
+					duration: closeDuration,
 					ease,
 					transformOrigin: "top center",
 					onComplete: () => {
@@ -275,12 +338,12 @@ export default function PillNav({
 		const targetId = href.slice(1);
 		const target = document.getElementById(targetId);
 		if (target) {
-			target.scrollIntoView({ behavior: "smooth" });
+			target.scrollIntoView({ behavior: reducedMotion ? "instant" : "smooth" });
 		}
 	};
 
 	const handleScrollToTop = () => {
-		window.scrollTo({ top: 0, behavior: "smooth" });
+		window.scrollTo({ top: 0, behavior: reducedMotion ? "instant" : "smooth" });
 	};
 
 	const cssVars = {

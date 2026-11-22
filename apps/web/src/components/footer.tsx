@@ -6,6 +6,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import BlurText from "@/components/blur-text";
 import { DecryptedText } from "@/components/decrypted-text";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -70,11 +71,33 @@ function MagneticLink({
 	onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
 }) {
 	const linkRef = useRef<HTMLAnchorElement>(null);
+	const reducedMotion = useReducedMotion();
 	const arrowRef = useRef<HTMLSpanElement>(null);
 	const underlineRef = useRef<HTMLDivElement>(null);
 
+	useEffect(() => {
+		if (!reducedMotion) {
+			return;
+		}
+		gsap.killTweensOf(
+			[linkRef.current, arrowRef.current, underlineRef.current].filter(Boolean)
+		);
+		if (linkRef.current) {
+			gsap.set(linkRef.current, { x: 0, y: 0 });
+		}
+		if (arrowRef.current) {
+			gsap.set(arrowRef.current, { x: -6, opacity: 0 });
+		}
+		if (underlineRef.current) {
+			gsap.set(underlineRef.current, { scaleX: 0 });
+		}
+	}, [reducedMotion]);
+
 	const handlePointerMove = useCallback(
 		(e: React.PointerEvent<HTMLAnchorElement>) => {
+			if (reducedMotion) {
+				return;
+			}
 			const el = linkRef.current;
 			if (!el) {
 				return;
@@ -89,10 +112,13 @@ function MagneticLink({
 				ease: "power2.out",
 			});
 		},
-		[]
+		[reducedMotion]
 	);
 
 	const handlePointerEnter = useCallback(() => {
+		if (reducedMotion) {
+			return;
+		}
 		if (arrowRef.current) {
 			gsap.to(arrowRef.current, {
 				x: 0,
@@ -108,9 +134,12 @@ function MagneticLink({
 				{ scaleX: 1, duration: 0.4, ease: "power3.out" }
 			);
 		}
-	}, []);
+	}, [reducedMotion]);
 
 	const handlePointerLeave = useCallback(() => {
+		if (reducedMotion) {
+			return;
+		}
 		const el = linkRef.current;
 		if (el) {
 			gsap.to(el, { x: 0, y: 0, duration: 0.5, ease: "power3.out" });
@@ -131,7 +160,7 @@ function MagneticLink({
 				ease: "power2.in",
 			});
 		}
-	}, []);
+	}, [reducedMotion]);
 
 	return (
 		<a
@@ -187,7 +216,8 @@ function AnimatedLine({ delay = 0 }: { delay?: number }) {
 			return;
 		}
 
-		const ctx = gsap.context(() => {
+		const media = gsap.matchMedia();
+		media.add("(prefers-reduced-motion: no-preference)", () => {
 			gsap.fromTo(
 				lineEl,
 				{ scaleX: 0, transformOrigin: "left center" },
@@ -205,13 +235,13 @@ function AnimatedLine({ delay = 0 }: { delay?: number }) {
 			);
 		});
 
-		return () => ctx.revert();
+		return () => media.revert();
 	}, [delay]);
 
 	return (
 		<div className="w-full py-[1px]" ref={triggerRef}>
 			<div
-				className="w-full scale-x-0"
+				className="w-full"
 				ref={lineRef}
 				style={{
 					height: "1px",
@@ -240,7 +270,8 @@ function StaggeredRevealRow({
 			return;
 		}
 
-		const ctx = gsap.context(() => {
+		const media = gsap.matchMedia();
+		media.add("(prefers-reduced-motion: no-preference)", () => {
 			gsap.fromTo(
 				targetEl,
 				{
@@ -264,49 +295,28 @@ function StaggeredRevealRow({
 			);
 		});
 
-		return () => ctx.revert();
+		return () => media.revert();
 	}, [delay]);
 
 	return (
 		<div ref={triggerRef}>
-			<div ref={targetRef} style={{ opacity: 0 }}>
-				{children}
-			</div>
+			<div ref={targetRef}>{children}</div>
 		</div>
 	);
 }
 
 function CharacterStaggerText({ text }: { text: string }) {
 	const containerRef = useRef<HTMLDivElement>(null);
-	const [inView, setInView] = useState(false);
-
 	useEffect(() => {
 		const el = containerRef.current;
 		if (!el) {
 			return;
 		}
 
-		const observer = new IntersectionObserver(
-			([entry]) => {
-				if (entry.isIntersecting) {
-					setInView(true);
-				}
-			},
-			{ threshold: 0.1, rootMargin: "0px 0px -10% 0px" }
-		);
-		observer.observe(el);
-		return () => observer.disconnect();
-	}, []);
-
-	useEffect(() => {
-		const el = containerRef.current;
-		if (!(el && inView)) {
-			return;
-		}
-
 		const chars = el.querySelectorAll(".stagger-char");
 
-		const ctx = gsap.context(() => {
+		const media = gsap.matchMedia();
+		media.add("(prefers-reduced-motion: no-preference)", () => {
 			gsap.fromTo(
 				chars,
 				{
@@ -321,12 +331,13 @@ function CharacterStaggerText({ text }: { text: string }) {
 					duration: 0.6,
 					stagger: 0.03,
 					ease: "power3.out",
+					scrollTrigger: { trigger: el, start: "top 90%", once: true },
 				}
 			);
 		});
 
-		return () => ctx.revert();
-	}, [inView]);
+		return () => media.revert();
+	}, []);
 
 	const chars = text
 		.split("")
@@ -343,7 +354,6 @@ function CharacterStaggerText({ text }: { text: string }) {
 					className="stagger-char inline-block"
 					key={id}
 					style={{
-						opacity: 0,
 						willChange: "transform, opacity",
 					}}
 				>
@@ -373,11 +383,12 @@ function PulsingDot() {
 }
 
 function ColonPulse({ time }: { time: string }) {
+	const reducedMotion = useReducedMotion();
 	const colonRefs = useRef<(HTMLSpanElement | null)[]>([]);
 
 	useEffect(() => {
 		const colons = colonRefs.current.filter(Boolean);
-		if (colons.length === 0) {
+		if (reducedMotion || colons.length === 0) {
 			return;
 		}
 
@@ -395,8 +406,12 @@ function ColonPulse({ time }: { time: string }) {
 			);
 		}, 1000);
 
-		return () => clearInterval(interval);
-	}, []);
+		return () => {
+			clearInterval(interval);
+			gsap.killTweensOf(colons);
+			gsap.set(colons, { clearProps: "opacity" });
+		};
+	}, [reducedMotion]);
 
 	const parts = time
 		.split(":")
@@ -425,6 +440,7 @@ export default function Footer() {
 	const footerRef = useRef<HTMLElement>(null);
 	const [sectionsVisible, setSectionsVisible] = useState(false);
 	const istTime = useISTClock();
+	const reducedMotion = useReducedMotion();
 
 	const handleNavClick = useCallback(
 		(e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
@@ -434,17 +450,22 @@ export default function Footer() {
 			e.preventDefault();
 			const hash = href.includes("#") ? href.split("#")[1] : "";
 			if (!hash) {
-				window.scrollTo({ top: 0, behavior: "smooth" });
+				window.scrollTo({
+					top: 0,
+					behavior: reducedMotion ? "instant" : "smooth",
+				});
 				return;
 			}
 			const target = document.getElementById(hash);
 			if (target) {
-				target.scrollIntoView({ behavior: "smooth" });
+				target.scrollIntoView({
+					behavior: reducedMotion ? "instant" : "smooth",
+				});
 			} else {
 				window.location.href = href;
 			}
 		},
-		[]
+		[reducedMotion]
 	);
 
 	useEffect(() => {

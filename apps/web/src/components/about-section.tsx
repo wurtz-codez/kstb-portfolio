@@ -3,8 +3,10 @@
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useLoader } from "@/contexts/loader-context";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import RotatingText from "./rotating-text";
 
 // Three.js, Rapier and the card assets are heavy and only needed once this
@@ -38,6 +40,7 @@ const EXPERTISE = [
 ] as const;
 
 export default function AboutSection() {
+	const reducedMotion = useReducedMotion();
 	const { loaderComplete } = useLoader();
 	const sectionRef = useRef<HTMLDivElement>(null);
 	const cardContainerRef = useRef<HTMLDivElement>(null);
@@ -55,7 +58,7 @@ export default function AboutSection() {
 
 	useEffect(() => {
 		const container = cardContainerRef.current;
-		if (!(container && !shouldRenderLanyard)) {
+		if (reducedMotion || !(container && !shouldRenderLanyard)) {
 			return;
 		}
 
@@ -71,7 +74,7 @@ export default function AboutSection() {
 
 		observer.observe(container);
 		return () => observer.disconnect();
-	}, [shouldRenderLanyard]);
+	}, [shouldRenderLanyard, reducedMotion]);
 
 	useEffect(() => {
 		const sectionEl = sectionRef.current;
@@ -81,118 +84,128 @@ export default function AboutSection() {
 			return;
 		}
 
-		const ctx = gsap.context(() => {
-			// 1. Card Reveal
-			gsap.fromTo(
-				cardEl,
-				{
-					y: 160,
-					opacity: 0,
-					scale: 0.92,
-				},
-				{
-					y: 0,
-					opacity: 1,
-					scale: 1,
-					ease: "power2.out",
-					scrollTrigger: {
-						trigger: sectionEl,
-						start: "top 80%",
-						end: "top 25%",
-						scrub: 1.2,
+		// The heading is also a ScrollTrigger target; preserve its visible base styles.
+		if (headingRef.current) {
+			ScrollTrigger.saveStyles(headingRef.current);
+		}
+
+		const media = gsap.matchMedia();
+		media.add(
+			"(prefers-reduced-motion: no-preference)",
+			() => {
+				// 1. Card Reveal
+				gsap.fromTo(
+					cardEl,
+					{
+						y: 160,
+						opacity: 0,
+						scale: 0.92,
 					},
+					{
+						y: 0,
+						opacity: 1,
+						scale: 1,
+						ease: "power2.out",
+						scrollTrigger: {
+							trigger: sectionEl,
+							start: "top 80%",
+							end: "top 25%",
+							scrub: 1.2,
+						},
+					}
+				);
+
+				// 2. Label & Heading Reveal
+				const headerElements = [labelRef.current, headingRef.current].filter(
+					Boolean
+				);
+				if (headerElements.length > 0) {
+					gsap.fromTo(
+						headerElements,
+						{
+							filter: "blur(12px)",
+							y: 40,
+							opacity: 0,
+						},
+						{
+							filter: "blur(0px)",
+							y: 0,
+							opacity: 1,
+							stagger: 0.2,
+							ease: "power2.out",
+							scrollTrigger: {
+								trigger: headingRef.current ?? sectionEl,
+								start: "top 85%",
+								end: "top 55%",
+								scrub: 1.2,
+							},
+						}
+					);
 				}
-			);
 
-			// 2. Label & Heading Reveal
-			const headerElements = [labelRef.current, headingRef.current].filter(
-				Boolean
-			);
-			if (headerElements.length > 0) {
-				gsap.fromTo(
-					headerElements,
-					{
-						filter: "blur(12px)",
-						y: 40,
-						opacity: 0,
-					},
-					{
-						filter: "blur(0px)",
-						y: 0,
-						opacity: 1,
-						stagger: 0.2,
-						ease: "power2.out",
+				// 3. Paragraph Lines Reveal (Line by line, slide in from top on scroll down, disappear on scroll up)
+				const lines = gsap.utils.toArray<HTMLElement>(
+					".about-line",
+					pContainerEl
+				);
+				if (lines.length > 0) {
+					const linesTl = gsap.timeline({
 						scrollTrigger: {
-							trigger: headingRef.current ?? sectionEl,
-							start: "top 85%",
-							end: "top 55%",
+							trigger: pContainerEl,
+							start: "top 75%",
+							end: "bottom 45%",
 							scrub: 1.2,
 						},
-					}
-				);
-			}
+					});
 
-			// 3. Paragraph Lines Reveal (Line by line, slide in from top on scroll down, disappear on scroll up)
-			const lines = gsap.utils.toArray<HTMLElement>(
-				".about-line",
-				pContainerEl
-			);
-			if (lines.length > 0) {
-				const linesTl = gsap.timeline({
-					scrollTrigger: {
-						trigger: pContainerEl,
-						start: "top 75%",
-						end: "bottom 45%",
-						scrub: 1.2,
-					},
-				});
-
-				linesTl.fromTo(
-					lines,
-					{
-						yPercent: -120,
-						opacity: 0,
-					},
-					{
-						yPercent: 0,
-						opacity: 1,
-						stagger: 0.15,
-						duration: 1,
-						ease: "power2.out",
-					}
-				);
-			}
-
-			// 4. Grid items
-			const gridItems = gridRef.current?.children;
-			if (gridItems && gridItems.length > 0) {
-				gsap.fromTo(
-					gridItems,
-					{
-						filter: "blur(12px)",
-						y: 30,
-						opacity: 0,
-					},
-					{
-						filter: "blur(0px)",
-						y: 0,
-						opacity: 1,
-						stagger: 0.15,
-						ease: "power2.out",
-						scrollTrigger: {
-							trigger: gridRef.current,
-							start: "top 85%",
-							end: "top 55%",
-							scrub: 1.2,
+					linesTl.fromTo(
+						lines,
+						{
+							yPercent: -120,
+							opacity: 0,
 						},
-					}
-				);
-			}
-		}, sectionEl);
+						{
+							yPercent: 0,
+							opacity: 1,
+							stagger: 0.15,
+							duration: 1,
+							ease: "power2.out",
+						}
+					);
+				}
+
+				// 4. Grid items
+				const gridItems = gridRef.current?.children;
+				if (gridItems && gridItems.length > 0) {
+					gsap.fromTo(
+						gridItems,
+						{
+							filter: "blur(12px)",
+							y: 30,
+							opacity: 0,
+						},
+						{
+							filter: "blur(0px)",
+							y: 0,
+							opacity: 1,
+							stagger: 0.15,
+							ease: "power2.out",
+							scrollTrigger: {
+								trigger: gridRef.current,
+								start: "top 85%",
+								end: "top 55%",
+								scrub: 1.2,
+							},
+						}
+					);
+				}
+			},
+			sectionEl
+		);
 
 		ScrollTrigger.refresh();
 
-		return () => ctx.revert();
+		return () => media.revert();
 	}, []);
 
 	return (
@@ -207,13 +220,23 @@ export default function AboutSection() {
 					className="flex h-[750px] w-full items-center justify-center lg:sticky lg:top-24"
 					ref={cardContainerRef}
 				>
-					{shouldRenderLanyard ? (
+					{reducedMotion ? (
+						<Image
+							alt="Koustubh Pande"
+							className="h-auto max-h-[600px] w-full max-w-[420px] rounded-xl object-contain"
+							height={600}
+							src="/portrait.png"
+							width={420}
+						/>
+					) : null}
+					{!reducedMotion && shouldRenderLanyard && (
 						<Lanyard
 							cardScale={5.04}
 							gravity={[0, -40, 0]}
 							position={[0, 0, 20]}
 						/>
-					) : (
+					)}
+					{!(reducedMotion || shouldRenderLanyard) && (
 						<div aria-hidden="true" className="h-full w-full" />
 					)}
 				</div>

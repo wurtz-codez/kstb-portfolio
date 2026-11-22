@@ -4,6 +4,7 @@ import gsap from "gsap";
 import { useEffect, useRef, useState } from "react";
 
 import { useLoader } from "@/contexts/loader-context";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
 const LETTERS = [
 	{ char: "k", key: "k-first", isShort: true },
@@ -25,6 +26,7 @@ export default function IntroLoader({
 	children: React.ReactNode;
 }) {
 	const { isLoading, startFadeOut, setLoaderComplete } = useLoader();
+	const reducedMotion = useReducedMotion();
 	const [shouldAnimate, setShouldAnimate] = useState(false);
 	const topPanelRef = useRef<HTMLDivElement>(null);
 	const bottomPanelRef = useRef<HTMLDivElement>(null);
@@ -38,6 +40,13 @@ export default function IntroLoader({
 	}, []);
 
 	useEffect(() => {
+		if (!isLoading) {
+			return;
+		}
+		if (reducedMotion) {
+			setLoaderComplete();
+			return;
+		}
 		if (!shouldAnimate) {
 			return;
 		}
@@ -154,15 +163,17 @@ export default function IntroLoader({
 		return () => {
 			tl.kill();
 		};
-	}, [shouldAnimate, startFadeOut, setLoaderComplete]);
-
-	if (!(isLoading || shouldAnimate)) {
-		return <>{children}</>;
-	}
+	}, [
+		reducedMotion,
+		shouldAnimate,
+		startFadeOut,
+		setLoaderComplete,
+		isLoading,
+	]);
 
 	return (
 		<>
-			{isLoading && (
+			{isLoading && !reducedMotion && (
 				<>
 					{/* Top half panel */}
 					<div

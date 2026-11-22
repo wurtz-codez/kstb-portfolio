@@ -4,6 +4,7 @@ import gsap from "gsap";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { useLoader } from "@/contexts/loader-context";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
 const SKILLS = [
 	"TypeScript",
@@ -55,6 +56,7 @@ const SVG_WIDTH = 960;
 const SVG_HEIGHT = 200;
 
 export default function HeroSection() {
+	const reducedMotion = useReducedMotion();
 	const { isFadingOut, loaderComplete } = useLoader();
 	const [isVisible, setIsVisible] = useState(false);
 	const containerRef = useRef<HTMLDivElement>(null);
@@ -62,10 +64,10 @@ export default function HeroSection() {
 	const [animationDone, setAnimationDone] = useState(false);
 
 	useEffect(() => {
-		if (isFadingOut && !isVisible) {
+		if ((isFadingOut || loaderComplete) && !isVisible) {
 			setIsVisible(true);
 		}
-	}, [isFadingOut, isVisible]);
+	}, [isFadingOut, isVisible, loaderComplete]);
 
 	// Stroke-draw animation: all letters draw simultaneously
 	useEffect(() => {
@@ -73,62 +75,80 @@ export default function HeroSection() {
 			return;
 		}
 
-		// Fade in the container
-		if (containerRef.current) {
-			gsap.fromTo(
-				containerRef.current,
-				{ opacity: 0 },
-				{
-					opacity: 1,
-					duration: 0.75,
-					ease: "power2.inOut",
-				}
-			);
-		}
-
-		const paths = pathRefs.current.filter(Boolean) as SVGPathElement[];
-		if (paths.length === 0) {
-			return;
-		}
-
-		// Set up each path for stroke-draw
-		for (const path of paths) {
-			const length = path.getTotalLength();
-			gsap.set(path, {
-				strokeDasharray: length,
-				strokeDashoffset: length,
-				fillOpacity: 0,
-			});
-		}
-
-		const tl = gsap.timeline({
-			onComplete: () => {
-				setAnimationDone(true);
+		const media = gsap.matchMedia();
+		media.add(
+			{
+				reduce: "(prefers-reduced-motion: reduce)",
+				animate: "(prefers-reduced-motion: no-preference)",
 			},
-		});
+			(context) => {
+				if (context.conditions?.reduce) {
+					gsap.killTweensOf(pathRefs.current.filter(Boolean));
+					gsap.set(containerRef.current, { opacity: 1 });
+					gsap.set(pathRefs.current.filter(Boolean), {
+						strokeDasharray: "none",
+						strokeDashoffset: 0,
+						fillOpacity: 1,
+					});
+					setAnimationDone(true);
+					return;
+				}
 
-		// All letters draw their outlines simultaneously
-		tl.to(paths, {
-			strokeDashoffset: 0,
-			duration: 2.4,
-			ease: "power2.inOut",
-		});
+				// Fade in the container
+				if (containerRef.current) {
+					gsap.fromTo(
+						containerRef.current,
+						{ opacity: 0 },
+						{
+							opacity: 1,
+							duration: 0.75,
+							ease: "power2.inOut",
+						}
+					);
+				}
 
-		// After outline completes, fade in the fill
-		tl.to(paths, {
-			fillOpacity: 1,
-			duration: 0.78,
-			ease: "power2.out",
-		});
+				const paths = pathRefs.current.filter(Boolean) as SVGPathElement[];
+				if (paths.length === 0) {
+					return;
+				}
 
-		return () => {
-			tl.kill();
-		};
+				// Set up each path for stroke-draw
+				for (const path of paths) {
+					const length = path.getTotalLength();
+					gsap.set(path, {
+						strokeDasharray: length,
+						strokeDashoffset: length,
+						fillOpacity: 0,
+					});
+				}
+
+				const tl = gsap.timeline({
+					onComplete: () => {
+						setAnimationDone(true);
+					},
+				});
+
+				// All letters draw their outlines simultaneously
+				tl.to(paths, {
+					strokeDashoffset: 0,
+					duration: 2.4,
+					ease: "power2.inOut",
+				});
+
+				// After outline completes, fade in the fill
+				tl.to(paths, {
+					fillOpacity: 1,
+					duration: 0.78,
+					ease: "power2.out",
+				});
+			}
+		);
+		return () => media.revert();
 	}, [isVisible]);
 
 	// Hover handlers: on hover, boost stroke brightness / fill
 	const handleMouseEnter = useCallback(() => {
-		if (!animationDone) {
+		if (reducedMotion || !animationDone) {
 			return;
 		}
 		const paths = pathRefs.current.filter(Boolean) as SVGPathElement[];
@@ -138,10 +158,10 @@ export default function HeroSection() {
 			duration: 0.8,
 			ease: "power2.out",
 		});
-	}, [animationDone]);
+	}, [animationDone, reducedMotion]);
 
 	const handleMouseLeave = useCallback(() => {
-		if (!animationDone) {
+		if (reducedMotion || !animationDone) {
 			return;
 		}
 		const paths = pathRefs.current.filter(Boolean) as SVGPathElement[];
@@ -151,7 +171,7 @@ export default function HeroSection() {
 			duration: 0.5,
 			ease: "power2.in",
 		});
-	}, [animationDone]);
+	}, [animationDone, reducedMotion]);
 
 	if (!(isVisible || loaderComplete)) {
 		return null;

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
 const SCRAMBLE_CHARS =
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.<>?";
@@ -24,6 +25,7 @@ export function DecryptedText({
 	speed = 50,
 	startWhen = true,
 }: DecryptedTextProps) {
+	const reducedMotion = useReducedMotion();
 	const [displayText, setDisplayText] = useState(children);
 	const [mounted, setMounted] = useState(false);
 	const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -82,7 +84,7 @@ export function DecryptedText({
 	}, []);
 
 	useEffect(() => {
-		if (!(mounted && startWhen)) {
+		if (reducedMotion || !(mounted && startWhen)) {
 			return;
 		}
 
@@ -111,7 +113,23 @@ export function DecryptedText({
 		}, delay);
 
 		return clearTimers;
-	}, [mounted, startWhen, delay, startAnimation, text, getRandomChar]);
+	}, [
+		mounted,
+		startWhen,
+		delay,
+		startAnimation,
+		text,
+		getRandomChar,
+		reducedMotion,
+	]);
+
+	if (reducedMotion) {
+		return (
+			<span className={className} style={style}>
+				{text}
+			</span>
+		);
+	}
 
 	return (
 		<span className={className} style={style}>

@@ -1,5 +1,6 @@
 import { type Easing, motion, type Transition } from "motion/react";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
 interface BlurTextProps {
 	text?: string;
@@ -46,12 +47,13 @@ const BlurText: React.FC<BlurTextProps> = ({
 	onAnimationComplete,
 	stepDuration = 0.35,
 }) => {
+	const reducedMotion = useReducedMotion();
 	const elements = animateBy === "words" ? text.split(" ") : text.split("");
 	const [inView, setInView] = useState(false);
 	const ref = useRef<HTMLParagraphElement>(null);
 
 	useEffect(() => {
-		if (!ref.current) {
+		if (reducedMotion || !ref.current) {
 			return;
 		}
 		const observer = new IntersectionObserver(
@@ -66,7 +68,7 @@ const BlurText: React.FC<BlurTextProps> = ({
 		);
 		observer.observe(ref.current);
 		return () => observer.disconnect();
-	}, [threshold, rootMargin]);
+	}, [threshold, rootMargin, reducedMotion]);
 
 	const defaultFrom = useMemo(
 		() =>
@@ -96,6 +98,14 @@ const BlurText: React.FC<BlurTextProps> = ({
 	const times = Array.from({ length: stepCount }, (_, i) =>
 		stepCount === 1 ? 0 : i / (stepCount - 1)
 	);
+
+	if (reducedMotion) {
+		return (
+			<p className={`blur-text ${className}`} ref={ref}>
+				{text}
+			</p>
+		);
+	}
 
 	return (
 		<p className={`blur-text ${className} flex flex-wrap`} ref={ref}>

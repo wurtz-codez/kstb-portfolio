@@ -15,6 +15,7 @@ import {
 	useMemo,
 	useState,
 } from "react";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { cn } from "../lib/utils";
 import "./rotating-text.css";
 
@@ -71,6 +72,7 @@ export default function RotatingText({
 	elementLevelClassName,
 	...rest
 }: RotatingTextProps) {
+	const reducedMotion = useReducedMotion();
 	const [currentTextIndex, setCurrentTextIndex] = useState<number>(0);
 
 	const splitIntoCharacters = useCallback((text: string): string[] => {
@@ -199,12 +201,16 @@ export default function RotatingText({
 	);
 
 	useEffect(() => {
-		if (!auto) {
+		if (reducedMotion || !auto) {
 			return;
 		}
 		const intervalId = setInterval(next, rotationInterval);
 		return () => clearInterval(intervalId);
-	}, [next, rotationInterval, auto]);
+	}, [next, rotationInterval, auto, reducedMotion]);
+
+	if (reducedMotion) {
+		return <span className={mainClassName}>{texts[currentTextIndex]}</span>;
+	}
 
 	return (
 		<motion.span
