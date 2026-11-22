@@ -268,8 +268,11 @@ export default function HeroSection() {
 						Download Resume
 					</a>
 					<a
+						aria-label="Contact me on LinkedIn"
 						className="inline-flex min-h-11 items-center justify-center rounded-full border border-white/30 px-5 py-3 font-medium text-sm transition-colors hover:border-white hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-4"
-						href="mailto:koustubhpande021@gmail.com"
+						href="https://www.linkedin.com/in/koustubh-pande/"
+						rel="noopener noreferrer"
+						target="_blank"
 					>
 						Contact Me
 					</a>
