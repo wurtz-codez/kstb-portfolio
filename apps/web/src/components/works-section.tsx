@@ -18,8 +18,8 @@ const PROJECTS = [
 			"Qode is a specialized engine for mapping complex codebases into interactive visual graphs. It leverages tree-sitter and sigma.js to let developers see the actual architecture of their software, identifying bottlenecks and dead code through data-driven visualization.",
 		category: "work",
 		tags: ["Next.js", "Tree-sitter", "Sigma.js", "LLM", "AI", "TS"],
-		github: "https://github.com/wurtz-codez/verq",
-		live: "https://verqai.vercel.app",
+		github: "https://github.com/wurtz-codez/Qode",
+		live: "https://qode-beta.vercel.app/home",
 	},
 	{
 		title: "verq",
