@@ -3,8 +3,9 @@
 import PillNav from "./pill-nav";
 
 const NAV_ITEMS = [
-	{ label: "About", href: "#about" },
 	{ label: "Works", href: "#works" },
+	{ label: "Experience", href: "#experience" },
+	{ label: "About", href: "#about" },
 ];
 
 export default function Header() {

@@ -3,9 +3,9 @@
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import CardSwap, { Card, type CardSwapHandle } from "./card-swap";
-import { DecryptedText } from "./decrypted-text";
 import GlitchText from "./glitch-text";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -19,9 +19,10 @@ const PROJECTS = [
 		longDescription:
 			"Qode is a local-first developer tool that parses repositories into interactive dependency graphs. It combines keyword and semantic retrieval to help engineers navigate unfamiliar codebases, with Tree-sitter for parsing and Sigma.js for graph visualization.",
 		category: "work",
-		tags: ["Next.js", "Tree-sitter", "Sigma.js", "LLM", "AI", "TS"],
+		tags: ["React", "TypeScript", "Tree-sitter", "Sigma.js", "WASM"],
 		github: "https://github.com/wurtz-codez/Qode",
 		live: "https://qode-beta.vercel.app/home",
+		caseStudy: "/projects/qode",
 	},
 	{
 		title: "VerQ",
@@ -31,21 +32,40 @@ const PROJECTS = [
 		longDescription:
 			"VerQ is an AI-powered interview practice platform that turns a candidate's resume into personalized interview questions, processes spoken answers, and generates structured feedback using Gemini and Deepgram. It helps candidates practice interviews tailored to their experience.",
 		category: "work",
-		tags: ["Next.js", "Gemini", "Deepgram", "React"],
+		tags: ["React", "Node.js", "Gemini", "Deepgram"],
 		github: "https://github.com/wurtz-codez/verq",
 		live: "https://verqai.vercel.app",
+		caseStudy: "/projects/verq",
 	},
 	{
 		title: "Arkaiv",
-		subtitle: "AI Model & Tool Discovery",
+		subtitle: "Open-source Contributions",
 		description:
-			"Find AI models and developer tools through a curated catalog and semantic search.",
+			"Contributed subscription flows, email retries, and UI improvements to an AI discovery platform.",
 		longDescription:
-			"Arkaiv brings AI models and developer tools into a curated catalog with semantic search. It helps engineers discover relevant components for their projects without searching across separate directories.",
+			"Arkaiv is an AI discovery platform originally created in tutankhAman/arkaiv. My contributions include the unsubscribe endpoint and dashboard notifications, subscription API and email delivery retries, CORS configuration, and navigation and dialog styling.",
 		category: "work",
-		tags: ["Discovery", "AI", "Tailwind"],
+		tags: ["React", "Express", "MongoDB"],
 		github: "https://github.com/wurtz-codez/arkaiv",
 		live: "https://arkaiv.vercel.app",
+		attribution: [
+			{
+				label: "Original project",
+				href: "https://github.com/tutankhAman/arkaiv",
+			},
+			{
+				label: "Subscription contributions",
+				href: "https://github.com/wurtz-codez/arkaiv/commit/299ace3adc4b0faa102b6af9953b618dacf51ce6",
+			},
+			{
+				label: "API and email retries",
+				href: "https://github.com/wurtz-codez/arkaiv/commit/6a0632eed53d2680acf20115d649fe25c6f0a5aa",
+			},
+			{
+				label: "UI contributions",
+				href: "https://github.com/wurtz-codez/arkaiv/commit/b9b2147a8a39dc3f051f09a6a1616035a77de7e0",
+			},
+		],
 	},
 	{
 		title: "Jewelry by LUNA",
@@ -68,8 +88,8 @@ const PROJECTS = [
 			"ALLROUND is a private TypeScript and Bun engine for coordinating multiple AI agents. It handles real-time communication, state synchronization, and task delegation so agents can share progress and work across distributed environments.",
 		category: "project",
 		tags: ["Agentic", "TS", "Bun"],
-		github: "https://github.com/singularityworks-xyz/ALLROUND",
-		live: "#",
+		github: null,
+		live: null,
 	},
 ] as const;
 
@@ -130,8 +150,8 @@ export default function WorksSection() {
 	const deckRef = useRef<HTMLDivElement>(null);
 	const deckControlRef = useRef<CardSwapHandle>(null);
 	const deck = useDeckConfig();
-	const [decryptActive, setDecryptActive] = useState(false);
 	const [activeIndex, setActiveIndex] = useState(0);
+	const activeProject = PROJECTS[activeIndex] ?? PROJECTS[0];
 	const handleCardChange = useCallback(
 		(idx: number) => setActiveIndex(idx),
 		[]
@@ -144,13 +164,6 @@ export default function WorksSection() {
 		if (!sectionEl) {
 			return;
 		}
-
-		const trigger = ScrollTrigger.create({
-			trigger: sectionEl,
-			start: "top 80%",
-			onEnter: () => setDecryptActive(true),
-			once: true,
-		});
 
 		const ctx = gsap.context(() => {
 			const tl = gsap.timeline({
@@ -204,16 +217,19 @@ export default function WorksSection() {
 
 		return () => {
 			ctx.revert();
-			trigger.kill();
 		};
 	}, []);
 
 	return (
 		<section
+			aria-labelledby="works-heading"
 			className="relative z-20 flex min-h-screen w-full items-center justify-center overflow-hidden bg-background py-32 md:py-48 lg:py-64"
 			id="works"
 			ref={sectionRef}
 		>
+			<h2 className="sr-only" id="works-heading">
+				Selected projects
+			</h2>
 			<div className="mx-auto grid w-full max-w-[1400px] grid-cols-1 items-center gap-16 px-6 lg:grid-cols-[2fr_3fr] lg:gap-24">
 				{/* Left Column: Heading and Info */}
 				<div className="flex flex-col items-start" ref={textRef}>
@@ -232,16 +248,36 @@ export default function WorksSection() {
 							curiosity
 						</GlitchText>
 					</div>
-					<div className="mt-6 min-h-[12rem] max-w-[50ch] font-[family:var(--font-jetbrains-mono)] text-base text-white/50 leading-relaxed md:text-lg lg:min-h-[14rem]">
-						<DecryptedText
-							delay={0}
-							duration={2000}
-							speed={30}
-							startWhen={decryptActive}
-						>
-							{PROJECTS[activeIndex]?.longDescription ?? ""}
-						</DecryptedText>
+					<div className="mt-6 min-h-[12rem] max-w-[50ch] font-[family:var(--font-jetbrains-mono)] text-base text-white/70 leading-relaxed md:text-lg lg:min-h-[14rem]">
+						<p id="project-description">{activeProject.longDescription}</p>
+						{"attribution" in activeProject && (
+							<ul
+								aria-label="Arkaiv attribution and contributions"
+								className="mt-5 flex flex-wrap gap-x-4 gap-y-3 text-sm"
+							>
+								{activeProject.attribution.map((source) => (
+									<li key={source.href}>
+										<a
+											className="underline underline-offset-4 hover:text-white focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-4"
+											href={source.href}
+											rel="noopener noreferrer"
+											target="_blank"
+										>
+											{source.label}
+										</a>
+									</li>
+								))}
+							</ul>
+						)}
 					</div>
+					{"caseStudy" in activeProject && (
+						<Link
+							className="mt-5 inline-flex min-h-11 items-center rounded-full border border-white/30 px-5 py-2 text-sm text-white transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-4"
+							href={activeProject.caseStudy}
+						>
+							Read {activeProject.title} case study
+						</Link>
+					)}
 
 					{/* Manual deck controls */}
 					<div className="mt-8 flex items-center gap-4 font-[family:var(--font-jetbrains-mono)]">
@@ -333,7 +369,7 @@ export default function WorksSection() {
 											))}
 										</div>
 
-										<div className="flex items-center gap-4 border-white/5 border-t pt-4">
+										<div className="flex flex-wrap items-center gap-x-4 gap-y-3 border-white/5 border-t pt-4">
 											{project.github && (
 												<a
 													className="font-[family:var(--font-jetbrains-mono)] text-white/60 text-xs underline underline-offset-4 transition-colors hover:text-white"
@@ -344,7 +380,17 @@ export default function WorksSection() {
 													code
 												</a>
 											)}
-											{project.live && project.live !== "#" && (
+											{!project.github && (
+												<span className="text-sm text-white/70">
+													Private repository
+												</span>
+											)}
+											{"attribution" in project && (
+												<span className="text-sm text-white/70">
+													Fork · Contributor
+												</span>
+											)}
+											{project.live && (
 												<a
 													className="flex items-center gap-1 font-[family:var(--font-jetbrains-mono)] text-white/60 text-xs underline underline-offset-4 transition-colors hover:text-white"
 													href={project.live}
@@ -353,6 +399,15 @@ export default function WorksSection() {
 												>
 													live demo <span className="text-[9px]">↗</span>
 												</a>
+											)}
+											{"caseStudy" in project && (
+												<Link
+													aria-label={`Read ${project.title} case study`}
+													className="text-sm text-white/80 underline underline-offset-4 hover:text-white"
+													href={project.caseStudy}
+												>
+													case study
+												</Link>
 											)}
 										</div>
 									</div>

@@ -464,7 +464,16 @@ export default function PillNav({
 					</div>
 				)}
 
+				<a
+					className="relative z-10 ml-auto inline-flex h-[42px] items-center justify-center rounded-full bg-white px-4 font-semibold text-black text-sm uppercase tracking-wide transition-colors hover:bg-white/85 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-4"
+					download="koustubh-resume.pdf"
+					href="/koustubh_resume.pdf"
+				>
+					Resume
+				</a>
 				<button
+					aria-controls="mobile-navigation"
+					aria-expanded={isMobileMenuOpen}
 					aria-label="Toggle menu"
 					className="mobile-menu-button hidden max-md:flex"
 					onClick={toggleMobileMenu}
@@ -479,6 +488,7 @@ export default function PillNav({
 
 			<div
 				className="mobile-menu-popover md:hidden"
+				id="mobile-navigation"
 				ref={mobileMenuRef}
 				style={cssVars}
 			>

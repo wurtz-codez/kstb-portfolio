@@ -19,18 +19,16 @@ const SOCIAL_LINKS = [
 ] as const;
 
 const SELECTED_WORKS = [
-	{ label: "verq", href: "https://verqai.vercel.app" },
+	{ label: "Qode", href: "https://qode-beta.vercel.app/home" },
+	{ label: "VerQ", href: "https://verqai.vercel.app" },
 	{ label: "arkaiv", href: "https://arkaiv.vercel.app" },
 	{ label: "Jewelry by LUNA", href: "https://www.jewelrybyluna.in" },
-	{
-		label: "ALLROUND",
-		href: "https://allroundpmc.com/",
-	},
 ] as const;
 
 const NAV_LINKS = [
 	{ label: "Home", href: "/" },
 	{ label: "Projects", href: "/#works" },
+	{ label: "Experience", href: "/#experience" },
 	{ label: "About", href: "/#about" },
 	{ label: "Contact", href: "mailto:koustubhpande021@gmail.com" },
 ] as const;
@@ -370,53 +368,6 @@ function PulsingDot() {
 				className="relative inline-flex h-2 w-2 rounded-full"
 				style={{ backgroundColor: "rgb(74, 222, 128)" }}
 			/>
-		</span>
-	);
-}
-
-function YearCounter() {
-	const [displayYear, setDisplayYear] = useState("0000");
-	const yearRef = useRef<HTMLSpanElement>(null);
-	const [hasAnimated, setHasAnimated] = useState(false);
-
-	useEffect(() => {
-		const el = yearRef.current;
-		if (!el) {
-			return;
-		}
-
-		const observer = new IntersectionObserver(
-			([entry]) => {
-				if (entry.isIntersecting && !hasAnimated) {
-					setHasAnimated(true);
-					const target = 2026;
-					const duration = 1500;
-					const startTime = Date.now();
-					const interval = setInterval(() => {
-						const elapsed = Date.now() - startTime;
-						const progress = Math.min(elapsed / duration, 1);
-						const eased = 1 - (1 - progress) ** 3;
-						const current = Math.floor(eased * target);
-						setDisplayYear(String(current).padStart(4, "0"));
-						if (progress >= 1) {
-							clearInterval(interval);
-							setDisplayYear("2026");
-						}
-					}, 16);
-				}
-			},
-			{ threshold: 0.5 }
-		);
-		observer.observe(el);
-		return () => observer.disconnect();
-	}, [hasAnimated]);
-
-	return (
-		<span
-			ref={yearRef}
-			style={{ fontVariantNumeric: "tabular-nums", fontFamily: FONT_MONO }}
-		>
-			{displayYear}
 		</span>
 	);
 }
@@ -794,7 +745,7 @@ export default function Footer() {
 								letterSpacing: "0.05em",
 							}}
 						>
-							&copy; <YearCounter /> Koustubh Pande
+							&copy; 2026 Koustubh Pande
 						</div>
 					</div>
 				</StaggeredRevealRow>
